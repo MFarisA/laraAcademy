@@ -193,3 +193,5 @@ Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `
 - IMPORTANT: Activate `inertia-react-development` when working with Inertia React client-side patterns.
 
 </laravel-boost-guidelines>
+
+- Selalu baca file `GRAPH_REPORT.md` dan rujukan data di `graphify-out/` saat menganalisis arsitektur dan relasi codebase.
