@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('exam_templates', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('program_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->string('type', 30);
+            $table->integer('total_duration_minutes');
             $table->timestamps();
         });
     }

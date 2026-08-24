@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('physical_assessments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('evaluator_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->date('assessment_date');
+            $table->decimal('total_physical_score', 5, 2)->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

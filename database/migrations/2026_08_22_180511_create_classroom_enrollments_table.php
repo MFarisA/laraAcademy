@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('classroom_enrollments', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
+            $table->string('status', 20)->default('active');
+            $table->timestamp('enrolled_at')->nullable();
+
+            $table->primary(['classroom_id', 'student_id']);
         });
     }
 

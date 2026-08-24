@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('exam_sessions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('exam_template_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('classroom_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('title')->nullable();
+            $table->string('token', 10)->nullable();
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
             $table->timestamps();
         });
     }

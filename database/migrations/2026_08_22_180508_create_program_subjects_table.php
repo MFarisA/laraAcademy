@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('program_subjects', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('program_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->integer('min_passing_score')->default(0);
+
+            $table->primary(['program_id', 'subject_id']);
         });
     }
 

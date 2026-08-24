@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('exam_answers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('exam_attempt_id')->constrained('exam_attempts')->cascadeOnDelete();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('selected_option_id')->nullable()->constrained('question_options')->nullOnDelete();
+            $table->decimal('score_earned', 5, 2)->default(0.00);
+            $table->integer('time_spent_seconds')->default(0);
             $table->timestamps();
         });
     }

@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('batch_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->integer('capacity')->default(30);
             $table->timestamps();
         });
     }

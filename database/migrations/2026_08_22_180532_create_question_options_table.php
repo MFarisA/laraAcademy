@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('question_options', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
+            $table->string('option_label', 5);
+            $table->text('option_text');
+            $table->boolean('is_correct')->default(false);
+            $table->decimal('weight_score', 5, 2)->default(0.00);
             $table->timestamps();
         });
     }

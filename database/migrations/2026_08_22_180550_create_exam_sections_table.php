@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('exam_sections', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('exam_template_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->integer('passing_grade')->default(0);
+            $table->integer('duration_minutes')->default(0);
+            $table->integer('order_index')->default(1);
             $table->timestamps();
         });
     }

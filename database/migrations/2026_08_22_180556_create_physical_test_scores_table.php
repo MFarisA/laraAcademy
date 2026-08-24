@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('physical_test_scores', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('physical_assessment_id')->constrained('physical_assessments')->cascadeOnDelete();
+            $table->string('metric_name', 100);
+            $table->string('raw_value', 50);
+            $table->decimal('calculated_score', 5, 2);
             $table->timestamps();
         });
     }
