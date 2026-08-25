@@ -22,6 +22,9 @@ class Subject extends Model
     /** @use HasFactory<SubjectFactory> */
     use HasFactory;
 
+    /**
+     * @return BelongsToMany<Program, $this>
+     */
     public function programs(): BelongsToMany
     {
         return $this->belongsToMany(Program::class)
@@ -29,16 +32,25 @@ class Subject extends Model
             ->withPivot('min_passing_score');
     }
 
+    /**
+     * @return HasMany<ClassSchedule, $this>
+     */
     public function schedules(): HasMany
     {
         return $this->hasMany(ClassSchedule::class);
     }
 
+    /**
+     * @return HasMany<Question, $this>
+     */
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
     }
 
+    /**
+     * @return HasMany<ExamSection, $this>
+     */
     public function examSections(): HasMany
     {
         return $this->hasMany(ExamSection::class);

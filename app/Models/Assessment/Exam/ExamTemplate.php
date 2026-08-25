@@ -21,16 +21,25 @@ class ExamTemplate extends Model
     /** @use HasFactory<ExamTemplateFactory> */
     use HasFactory;
 
+    /**
+     * @return BelongsTo<Program, $this>
+     */
     public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);
     }
 
+    /**
+     * @return HasMany<ExamSection, $this>
+     */
     public function sections(): HasMany
     {
         return $this->hasMany(ExamSection::class);
     }
 
+    /**
+     * @return HasMany<ExamSession, $this>
+     */
     public function sessions(): HasMany
     {
         return $this->hasMany(ExamSession::class);

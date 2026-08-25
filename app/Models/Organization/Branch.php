@@ -21,11 +21,17 @@ class Branch extends Model
     /** @use HasFactory<BranchFactory> */
     use HasFactory;
 
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
+    /**
+     * @return HasMany<Classroom, $this>
+     */
     public function classrooms(): HasMany
     {
         return $this->hasMany(Classroom::class);

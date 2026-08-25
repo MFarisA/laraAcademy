@@ -26,16 +26,25 @@ class Classroom extends Model
     /** @use HasFactory<ClassroomFactory> */
     use HasFactory;
 
+    /**
+     * @return BelongsTo<Batch, $this>
+     */
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
     }
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * @return BelongsToMany<User, $this>
+     */
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'classroom_enrollments', 'classroom_id', 'student_id')
@@ -44,11 +53,17 @@ class Classroom extends Model
             ->as('enrollment');
     }
 
+    /**
+     * @return HasMany<ClassSchedule, $this>
+     */
     public function schedules(): HasMany
     {
         return $this->hasMany(ClassSchedule::class);
     }
 
+    /**
+     * @return HasMany<ExamSession, $this>
+     */
     public function examSessions(): HasMany
     {
         return $this->hasMany(ExamSession::class);

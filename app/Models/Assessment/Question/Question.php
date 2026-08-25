@@ -25,16 +25,25 @@ class Question extends Model
     /** @use HasFactory<QuestionFactory> */
     use HasFactory;
 
+    /**
+     * @return BelongsTo<Subject, $this>
+     */
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);
     }
 
+    /**
+     * @return HasMany<QuestionOption, $this>
+     */
     public function options(): HasMany
     {
         return $this->hasMany(QuestionOption::class);
     }
 
+    /**
+     * @return BelongsToMany<ExamSection, $this>
+     */
     public function examSections(): BelongsToMany
     {
         return $this->belongsToMany(

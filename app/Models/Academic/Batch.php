@@ -20,11 +20,17 @@ class Batch extends Model
     /** @use HasFactory<BatchFactory> */
     use HasFactory;
 
+    /**
+     * @return HasMany<Classroom, $this>
+     */
     public function classrooms(): HasMany
     {
         return $this->hasMany(Classroom::class);
     }
 
+    /**
+     * @return BelongsTo<Program, $this>
+     */
     public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);

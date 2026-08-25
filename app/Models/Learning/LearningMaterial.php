@@ -32,11 +32,17 @@ class LearningMaterial extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Subject, $this>
+     */
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);
     }
 
+    /**
+     * @return BelongsTo<Program, $this>
+     */
     public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);

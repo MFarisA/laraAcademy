@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -41,7 +42,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -57,33 +58,51 @@ class User extends Authenticatable implements PasskeyUser
         ];
     }
 
+    /**
+     * @return BelongsTo<Branch, $this>
+     */
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * @return HasMany<ClassroomEnrollment, $this>
+     */
     public function enrollments(): HasMany
     {
-        return $this->hasMany(ClassroomEnrollment::class);
+        return $this->hasMany(ClassroomEnrollment::class, 'student_id');
     }
 
+    /**
+     * @return HasMany<ClassSchedule, $this>
+     */
     public function schedulesAsInstructor(): HasMany
     {
-        return $this->hasMany(ClassSchedule::class);
+        return $this->hasMany(ClassSchedule::class, 'instructor_id');
     }
 
+    /**
+     * @return HasMany<Attendance, $this>
+     */
     public function attendances(): HasMany
     {
-        return $this->hasMany(Attendance::class);
+        return $this->hasMany(Attendance::class, 'student_id');
     }
 
+    /**
+     * @return HasMany<ExamAttempt, $this>
+     */
     public function examAttempts(): HasMany
     {
-        return $this->hasMany(ExamAttempt::class);
+        return $this->hasMany(ExamAttempt::class, 'student_id');
     }
 
+    /**
+     * @return HasMany<PhysicalAssessment, $this>
+     */
     public function physicalAssessments(): HasMany
     {
-        return $this->hasMany(PhysicalAssessment::class);
+        return $this->hasMany(PhysicalAssessment::class, 'student_id');
     }
 }

@@ -29,11 +29,17 @@ class Attendance extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<ClassSchedule, $this>
+     */
     public function schedule(): BelongsTo
     {
         return $this->belongsTo(ClassSchedule::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'student_id');
