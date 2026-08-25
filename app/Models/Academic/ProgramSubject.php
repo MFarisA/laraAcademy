@@ -2,11 +2,35 @@
 
 namespace App\Models\Academic;
 
+use Database\Factories\Academic\ProgramSubjectFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ProgramSubject extends Model
+#[Fillable([
+    'program_id',
+    'subject_id',
+    'min_passing_score',
+])]
+class ProgramSubject extends Pivot
 {
-    /** @use HasFactory<\Database\Factories\Academic\ProgramSubjectFactory> */
+    /** @use HasFactory<ProgramSubjectFactory> */
     use HasFactory;
+
+    /**
+     * @return BelongsTo<Program, $this>
+     */
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(Program::class);
+    }
+
+    /**
+     * @return BelongsTo<Subject, $this>
+     */
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
+    }
 }
