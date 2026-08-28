@@ -10,9 +10,9 @@ enum AssessmentExamPermissionEnum: string implements PermissionInterface
     case TEMPLATES_MANAGE = 'assessment.exam_templates.manage';
     case SESSIONS_VIEW = 'assessment.exam_sessions.view';
     case SESSIONS_MANAGE = 'assessment.exam_sessions.manage';
-    case ATTEMPTS_TAKE = 'assessment.exam-attempts.take';
-    case ATTEMPTS_VIEW_RESULT = 'assessment.attempts.view_result';
-    case ATTEMPTS_GRADE_MANUAL = 'assessment.attempts.grade_manual';
+    case ATTEMPTS_TAKE = 'assessment.exam_attempts.take';
+    case ATTEMPTS_VIEW_RESULT = 'assessment.exam_attempts.view_result';
+    case ATTEMPTS_GRADE_MANUAL = 'assessment.exam_attempts.grade_manual';
 
     #[Override]
     public function label(): string

@@ -2,8 +2,6 @@
 
 namespace App\Enum\Access\Permission;
 
-use PHPStan\Rules\Functions\SortParameterCastableToStringRule;
-
 enum PermissionRegisteryEnum
 {
     /**

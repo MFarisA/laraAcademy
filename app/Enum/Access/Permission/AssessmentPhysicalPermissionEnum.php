@@ -24,7 +24,7 @@ enum AssessmentPhysicalPermissionEnum: string implements PermissionInterface
     #[Override]
     public static function group(): string
     {
-        return 'Assessment - CBT / Exam';
+        return 'Assessment - Physical';
     }
 
     #[Override]
