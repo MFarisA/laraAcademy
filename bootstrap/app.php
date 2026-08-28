@@ -24,9 +24,15 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
-            RoleMiddleware::class,
-            PermissionMiddleware::class,
-            RoleOrPermissionMiddleware::class,
+        ]);
+
+        // Alias Spatie untuk dipakai selektif di route (mis. ->middleware('role:super-admin')).
+        // JANGAN tambahkan RoleMiddleware/PermissionMiddleware ke grup web global —
+        // itu akan melumpuhkan semua halaman publik (login, register, home, dll).
+        $middleware->alias([
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

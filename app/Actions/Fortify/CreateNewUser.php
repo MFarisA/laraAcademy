@@ -4,6 +4,7 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
+use App\Enum\Access\RoleRegistryEnum;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -24,10 +25,17 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
         ]);
+
+        // User yang daftar lewat form publik selalu menjadi Siswa.
+        // Role internal (instructor, admin-branch, evaluator, super-admin)
+        // TIDAK pernah diberikan lewat registrasi — hanya oleh admin via UI.
+        $user->assignRole(RoleRegistryEnum::STUDENT->value);
+
+        return $user;
     }
 }
