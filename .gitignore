@@ -29,3 +29,5 @@ yarn-error.log
 /.zed
 graphify-out/
 .graphify*
+_ide_helper.php
+_ide_helper_models.php
