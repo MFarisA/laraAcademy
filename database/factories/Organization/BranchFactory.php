@@ -18,7 +18,10 @@ class BranchFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->company() . ' Branch',
+            'code' => strtoupper(fake()->bothify('???-##')),
+            'city' => fake()->city(),
+            'address' => fake()->address(),
         ];
     }
 }
