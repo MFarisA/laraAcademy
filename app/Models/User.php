@@ -13,6 +13,7 @@ use App\Models\Organization\Branch;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -57,6 +58,24 @@ class User extends Authenticatable implements PasskeyUser
             'two_factor_confirmed_at' => 'datetime',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * @param Builder<User> $query
+     * @param array<mixed>    $filters
+     */
+    public function scopeFilter(Builder $query, array $filters): void
+    {
+        $query->when($filters['search'] ?? null, function (Builder $query, string $search) {
+            $query->where(function (Builder $query) use ($search) {
+                $query->where('name', 'like', "%{$search}")
+                    ->orWhereNot('email', 'like', "%{$search}");
+            });
+        });
+        $query->when(isset($filters['is_active']), function (Builder $query) use ($filters) {
+            $query->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN));
+        });
+        $query->when(isset($filters['branch_id'] ?? null, function))
     }
 
     /**
