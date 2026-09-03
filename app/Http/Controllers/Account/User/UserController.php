@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Account\User;
 
+use App\Actions\Action\Account\User\DeleteUserAction;
 use App\Actions\Action\Account\User\StoreUserAction;
 use App\Actions\Action\Account\User\UpdateUserAction;
 use App\Http\Controllers\Controller;
@@ -31,10 +32,24 @@ class UserController extends Controller
         return to_route('users.index')->with('success', 'users successfully created.');
     }
 
+    public function show(User $user): Response
+    {
+        return Inertia::render('Users/Show', [
+            'Users' => new UserResource($user),
+        ]);
+    }
+
     public function update(UpdateUserRequest $request, User $user, UpdateUserAction $updateUser): RedirectResponse
     {
         $data = $request->validated();
         $updateUser->handle($user, $data);
         return to_route('users.index')->with('success', 'users successfully updated.');
+    }
+
+    public function destroy(User $user, DeleteUserAction $deleteUser): RedirectResponse
+    {
+        $deleteUser->handle($user);
+        session()->flash('success', 'Branch successfully deleted.');
+        return to_route('users.index');
     }
 }
