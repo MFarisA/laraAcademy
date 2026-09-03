@@ -37,6 +37,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static> filter(array<string, mixed> $filters)
  */
 #[Fillable(['name', 'email', 'password', 'is_active', 'branch_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -61,21 +63,28 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * @param Builder<User> $query
-     * @param array<mixed>    $filters
+     * @param  Builder<User>  $query
+     * @param  array<mixed>  $filters
      */
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query->when($filters['search'] ?? null, function (Builder $query, string $search) {
             $query->where(function (Builder $query) use ($search) {
                 $query->where('name', 'like', "%{$search}")
-                    ->orWhereNot('email', 'like', "%{$search}");
+                    ->orWhere('email', 'like', "%{$search}");
             });
         });
         $query->when(isset($filters['is_active']), function (Builder $query) use ($filters) {
             $query->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN));
         });
-        $query->when(isset($filters['branch_id'] ?? null, function))
+        $query->when($filters['branch_id'] ?? null, function (Builder $query, $branchId) {
+            $query->where('branch_id', $branchId);
+        });
+        $query->when($filters['roles'] ?? null, function (Builder $query, string $role) {
+            $query->whereHas('roles', function (Builder $query) use ($role) {
+                $query->where('name', $role);
+            });
+        });
     }
 
     /**
