@@ -28,7 +28,7 @@ class UserController extends Controller
 
         return Inertia::render('Users/Index', [
             'users' => UserResource::collection($users),
-            'filters' => $request->only(['search', 'branch_id']),
+            'filters' => $request->only(['search', 'branch_id', 'is_active', 'roles']),
         ]);
     }
 
