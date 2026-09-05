@@ -22,7 +22,7 @@ class Program extends Model
     use HasFactory;
 
     /**
-     * @return BelongsToMany<Subject, $this>
+     * @return BelongsToMany<Subject, $this, ProgramSubject>
      */
     public function subjects(): BelongsToMany
     {
