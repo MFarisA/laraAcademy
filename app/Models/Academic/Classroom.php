@@ -43,7 +43,7 @@ class Classroom extends Model
     }
 
     /**
-     * @return BelongsToMany<User, $this>
+     * @return BelongsToMany<User, $this, ClassroomEnrollment, 'enrollment'>
      */
     public function students(): BelongsToMany
     {

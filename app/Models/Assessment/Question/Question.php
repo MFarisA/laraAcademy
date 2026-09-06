@@ -42,7 +42,7 @@ class Question extends Model
     }
 
     /**
-     * @return BelongsToMany<ExamSection, $this>
+     * @return BelongsToMany<ExamSection, $this, ExamSectionQuestion>
      */
     public function examSections(): BelongsToMany
     {
