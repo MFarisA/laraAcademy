@@ -25,7 +25,7 @@ class StoreProgramRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'code' => ['nullable', 'string'],
-            'description' => ['nullable', 'text'],
+            'description' => ['nullable', 'string'],
         ];
     }
 }

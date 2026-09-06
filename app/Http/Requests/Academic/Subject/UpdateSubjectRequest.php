@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Academic\Subject;
 
+use App\Models\Academic\Subject;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSubjectRequest extends FormRequest
 {
@@ -22,8 +24,18 @@ class UpdateSubjectRequest extends FormRequest
      */
     public function rules(): array
     {
+        $subject = $this->route('subject');
+        $subjectId = $subject instanceof Subject ? $subject->id : $subject;
+
         return [
-            //
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('subjects', 'code')->ignore($subjectId),
+            ],
+            'description' => ['nullable', 'string'],
         ];
     }
 }

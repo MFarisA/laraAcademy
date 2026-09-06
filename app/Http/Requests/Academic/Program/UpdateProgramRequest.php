@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Academic\Program;
 
+use App\Models\Academic\Program;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProgramRequest extends FormRequest
 {
@@ -22,8 +24,18 @@ class UpdateProgramRequest extends FormRequest
      */
     public function rules(): array
     {
+        $program = $this->route('program');
+        $programId = $program instanceof Program ? $program->id : $program;
+
         return [
-            //
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('programs', 'code')->ignore($programId),
+            ],
+            'description' => ['nullable', 'string'],
         ];
     }
 }
