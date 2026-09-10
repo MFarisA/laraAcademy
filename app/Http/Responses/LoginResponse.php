@@ -19,17 +19,6 @@ class LoginResponse implements LoginResponseContract
         if ($request->wantsJson()) {
             return response()->json(['two_factor' => false]);
         }
-
-        $user = $request->user();
-
-        $targetUrl = match (true) {
-            $user->hasAnyRole([RoleRegistryEnum::SUPERADMIN->value, RoleRegistryEnum::ADMINBRANCH->value]) => route('dashboard'),
-
-            $user->hasRole(RoleRegistryEnum::INSTRUCTOR->value) => route('dashboard'),
-
-            default => route('dashboard'),
-        };
-
-        return redirect()->intended($targetUrl);
+        return redirect()->intended(route('dashboard'));
     }
 }
