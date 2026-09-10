@@ -12,6 +12,7 @@ use App\Http\Resources\Account\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,7 +20,9 @@ class UserController extends Controller
 {
     public function index(Request $request): Response
     {
+        Gate::authorize('viewAny', User::class);
         $users = User::query()
+            ->accessibleBy($request->user())
             ->with(['branch', 'roles'])
             ->filter($request->only(['search', 'is_active', 'branch_id', 'roles']))
             ->latest()

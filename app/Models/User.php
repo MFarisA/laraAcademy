@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enum\Access\RoleRegistryEnum;
 use App\Models\Academic\Enrollment\ClassroomEnrollment;
 use App\Models\Assessment\Exam\ExamAttempt;
 use App\Models\Assessment\Physical\PhysicalAssessment;
@@ -68,17 +69,29 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function scopeFilter(Builder $query, array $filters): void
     {
-        $query->when($filters['search'] ?? null, fn (Builder $q, string $search) => $q
+        $query->when($filters['search'] ?? null, fn(Builder $q, string $search) => $q
             ->whereAny(['name', 'email'], 'like', "%{$search}%"));
 
-        $query->when(filled($filters['is_active'] ?? null), fn (Builder $q) => $q
+        $query->when(filled($filters['is_active'] ?? null), fn(Builder $q) => $q
             ->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN)));
 
-        $query->when($filters['branch_id'] ?? null, fn (Builder $q, $branchId) => $q
+        $query->when($filters['branch_id'] ?? null, fn(Builder $q, $branchId) => $q
             ->where('branch_id', $branchId));
 
-        $query->when($filters['roles'] ?? null, fn (Builder $q, string $role) => $q
+        $query->when($filters['roles'] ?? null, fn(Builder $q, string $role) => $q
             ->whereRelation('roles', 'name', $role));
+    }
+
+    /**
+     * @param Builder<User> $query
+     * @return Builder<User>
+     */
+    public function scopeAccessibleBy(Builder $query, User $user): Builder
+    {
+        if (! $user->hasRole(RoleRegistryEnum::SUPERADMIN->value)) {
+            return $query;
+        }
+        return $query->where('branch_id', $user->branch_id);
     }
 
     /**
