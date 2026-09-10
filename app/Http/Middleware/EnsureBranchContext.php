@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enum\Access\RoleRegistryEnum;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
@@ -19,7 +20,7 @@ class EnsureBranchContext
     {
         $user = $request->user();
 
-        if ($user) {
+        if ($user instanceof User) {
             if ($user->branch_id) {
                 Context::add('branch_id', $user->branch_id);
             }

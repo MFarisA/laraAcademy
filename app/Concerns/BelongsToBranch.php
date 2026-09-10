@@ -7,6 +7,7 @@ use App\Models\Organization\Branch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
 
 trait BelongsToBranch
@@ -27,9 +28,9 @@ trait BelongsToBranch
      */
     public function scopeAccessibleBy(Builder $query, ?User $user = null): Builder
     {
-        $user ??= auth()->user();
+        $user ??= Auth::user();
 
-        if ($user === null || $user->hasRole(RoleRegistryEnum::SUPERADMIN->value)) {
+        if (! $user instanceof User || $user->hasRole(RoleRegistryEnum::SUPERADMIN->value)) {
             return $query;
         }
 
