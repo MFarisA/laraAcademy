@@ -40,6 +40,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static> filter(array<string, mixed> $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder<static> accessibleBy(?\App\Models\User $user)
  */
 #[Fillable(['name', 'email', 'password', 'is_active', 'branch_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -84,11 +85,12 @@ class User extends Authenticatable implements PasskeyUser
 
     /**
      * @param Builder<User> $query
+     * @param User|null $user
      * @return Builder<User>
      */
     public function scopeAccessibleBy(Builder $query, User $user): Builder
     {
-        if (! $user->hasRole(RoleRegistryEnum::SUPERADMIN->value)) {
+        if ($user === null || $user->hasRole(RoleRegistryEnum::SUPERADMIN->value)) {
             return $query;
         }
         return $query->where('branch_id', $user->branch_id);
