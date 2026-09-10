@@ -2,10 +2,10 @@
 
 namespace App\Models\Academic;
 
+use App\Concerns\BelongsToBranch;
 use App\Models\Academic\Enrollment\ClassroomEnrollment;
 use App\Models\Assessment\Exam\ExamSession;
 use App\Models\Learning\ClassSchedule;
-use App\Models\Organization\Branch;
 use App\Models\User;
 use Database\Factories\Academic\ClassroomFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static> accessibleBy(?\App\Models\User $user = null)
+ */
 #[Fillable([
     'batch_id',
     'branch_id',
@@ -24,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Classroom extends Model
 {
     /** @use HasFactory<ClassroomFactory> */
-    use HasFactory;
+    use BelongsToBranch, HasFactory;
 
     /**
      * @return BelongsTo<Batch, $this>
@@ -32,14 +35,6 @@ class Classroom extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
-    }
-
-    /**
-     * @return BelongsTo<Branch, $this>
-     */
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
     }
 
     /**

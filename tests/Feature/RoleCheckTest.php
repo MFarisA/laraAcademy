@@ -19,6 +19,14 @@ test('regular user cannot bypass unregistered permission', function () {
     expect(Gate::forUser($regularUser)->allows('random.unregistered.permission'))->toBeFalse();
 });
 
+test('user without role is forbidden from protected routes', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('branches.index'));
+
+    $response->assertForbidden();
+});
+
 test('new users register will be assigned as Student', function () {
     $this->seed(RolePermissionSeeder::class);
 

@@ -13,14 +13,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 });
 
+Route::middleware(['auth', 'verified', 'role:super-admin|admin-branch'])->group(function () {
+    Route::inertia('admin/dashboard', 'dashboard')->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'verified', 'role:instructor|super-admin'])->group(function () {
+    Route::inertia('schedules', 'dashboard')->name('schedules.index');
+});
+
 Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
     Route::resource('branches', BranchController::class);
     Route::resource('programs', ProgramController::class);
     Route::resource('subjects', SubjectController::class);
 });
 
-Route::middleware(['auth', 'verified', 'permission:' . UserPermissionEnum::VIEW->value])->group(function () {
+Route::middleware(['auth', 'verified', 'permission:'.UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
     Route::resource('users', UserController::class);
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

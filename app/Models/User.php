@@ -4,19 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Enum\Access\RoleRegistryEnum;
+use App\Concerns\BelongsToBranch;
 use App\Models\Academic\Enrollment\ClassroomEnrollment;
 use App\Models\Assessment\Exam\ExamAttempt;
 use App\Models\Assessment\Physical\PhysicalAssessment;
 use App\Models\Learning\Attendance;
 use App\Models\Learning\ClassSchedule;
-use App\Models\Organization\Branch;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -40,14 +38,14 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static> filter(array<string, mixed> $filters)
- * @method static \Illuminate\Database\Eloquent\Builder<static> accessibleBy(?\App\Models\User $user)
+ * @method static \Illuminate\Database\Eloquent\Builder<static> accessibleBy(?\App\Models\User $user = null)
  */
 #[Fillable(['name', 'email', 'password', 'is_active', 'branch_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use BelongsToBranch, HasFactory, HasRoles, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -70,38 +68,17 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function scopeFilter(Builder $query, array $filters): void
     {
-        $query->when($filters['search'] ?? null, fn(Builder $q, string $search) => $q
+        $query->when($filters['search'] ?? null, fn (Builder $q, string $search) => $q
             ->whereAny(['name', 'email'], 'like', "%{$search}%"));
 
-        $query->when(filled($filters['is_active'] ?? null), fn(Builder $q) => $q
+        $query->when(filled($filters['is_active'] ?? null), fn (Builder $q) => $q
             ->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN)));
 
-        $query->when($filters['branch_id'] ?? null, fn(Builder $q, $branchId) => $q
+        $query->when($filters['branch_id'] ?? null, fn (Builder $q, $branchId) => $q
             ->where('branch_id', $branchId));
 
-        $query->when($filters['roles'] ?? null, fn(Builder $q, string $role) => $q
+        $query->when($filters['roles'] ?? null, fn (Builder $q, string $role) => $q
             ->whereRelation('roles', 'name', $role));
-    }
-
-    /**
-     * @param Builder<User> $query
-     * @param User|null $user
-     * @return Builder<User>
-     */
-    public function scopeAccessibleBy(Builder $query, User $user): Builder
-    {
-        if ($user === null || $user->hasRole(RoleRegistryEnum::SUPERADMIN->value)) {
-            return $query;
-        }
-        return $query->where('branch_id', $user->branch_id);
-    }
-
-    /**
-     * @return BelongsTo<Branch, $this>
-     */
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
     }
 
     /**
