@@ -12,7 +12,7 @@ class UpdateBatchRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,10 @@ class UpdateBatchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'program_id' => ['required', 'exists:programs,id'],
+            'name' => ['required', 'string', 'min:3', 'max:100'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
         ];
     }
 }

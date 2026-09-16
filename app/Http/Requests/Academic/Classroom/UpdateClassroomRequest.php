@@ -12,7 +12,7 @@ class UpdateClassroomRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,10 @@ class UpdateClassroomRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'batch_id' => ['required', 'exists:batches,id'],
+            'branch_id' => ['required', 'exists:branches,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'capacity' => ['required', 'integer', 'min:1'],
         ];
     }
 }
