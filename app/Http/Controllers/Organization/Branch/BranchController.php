@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Organization\Branch;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\Branch\StoreBranchRequest;
 use App\Http\Requests\Organization\Branch\UpdateBranchRequest;
+use App\Http\Resources\Organization\Branch\BranchResource;
 use App\Http\Resources\Organization\Branch\StoreBranchResource;
 use App\Models\Organization\Branch;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ class BranchController extends Controller
     public function index(): Response
     {
         return Inertia::render('Branches/Index', [
-            'branches' => StoreBranchResource::collection(
+            'branches' => BranchResource::collection(
                 Branch::query()
                     ->latest()
                     ->get()
@@ -34,7 +35,7 @@ class BranchController extends Controller
     public function show(Branch $branch): Response
     {
         return Inertia::render('branches/Show', [
-            'branches' => new StoreBranchResource($branch),
+            'branches' => new BranchResource($branch),
         ]);
     }
 
