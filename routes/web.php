@@ -4,6 +4,7 @@ use App\Enum\Access\Permission\UserPermissionEnum;
 use App\Http\Controllers\Academic\BatchController;
 use App\Http\Controllers\Academic\ClassroomController;
 use App\Http\Controllers\Academic\ProgramController;
+use App\Http\Controllers\Academic\ProgramSubjectController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Account\User\UserController;
 use App\Http\Controllers\Organization\Branch\BranchController;
@@ -29,6 +30,8 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
     Route::resource('subjects', SubjectController::class);
     Route::resource('batches', BatchController::class);
     Route::resource('classrooms', ClassroomController::class);
+
+    Route::put('programs/{programs}/subjects', [ProgramSubjectController::class, 'update'])->name('programs.subjects.update');
 });
 
 Route::middleware(['auth', 'verified', 'permission:' . UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {

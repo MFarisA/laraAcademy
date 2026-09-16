@@ -18,6 +18,7 @@ class ProgramSubject extends Pivot
     /** @use HasFactory<ProgramSubjectFactory> */
     use HasFactory;
 
+    protected $table = 'program_subjects';
     /**
      * @return BelongsTo<Program, $this>
      */

@@ -27,7 +27,7 @@ class Subject extends Model
      */
     public function programs(): BelongsToMany
     {
-        return $this->belongsToMany(Program::class)
+        return $this->belongsToMany(Program::class, 'program_subjects')
             ->using(ProgramSubject::class)
             ->withPivot('min_passing_score');
     }
