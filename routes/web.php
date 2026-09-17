@@ -3,6 +3,7 @@
 use App\Enum\Access\Permission\UserPermissionEnum;
 use App\Http\Controllers\Academic\BatchController;
 use App\Http\Controllers\Academic\ClassroomController;
+use App\Http\Controllers\Academic\ClassroomEnrollmentController;
 use App\Http\Controllers\Academic\ProgramController;
 use App\Http\Controllers\Academic\ProgramSubjectController;
 use App\Http\Controllers\Academic\SubjectController;
@@ -32,6 +33,13 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
     Route::resource('classrooms', ClassroomController::class);
 
     Route::put('programs/{programs}/subjects', [ProgramSubjectController::class, 'update'])->name('programs.subjects.update');
+
+    Route::post('classrooms/{classroom}/enrollments', [ClassroomEnrollmentController::class, 'store'])
+        ->name('classrooms.enrollments.store');
+    Route::patch('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'update'])
+        ->name('classrooms.enrollments.update');
+    Route::delete('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'destroy'])
+        ->name('classrooms.enrollments.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'permission:' . UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
