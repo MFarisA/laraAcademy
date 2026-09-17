@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\Branch\StoreBranchRequest;
 use App\Http\Requests\Organization\Branch\UpdateBranchRequest;
 use App\Http\Resources\Organization\Branch\BranchResource;
-use App\Http\Resources\Organization\Branch\StoreBranchResource;
 use App\Models\Organization\Branch;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;

@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
 
+/**
+ * @property \Illuminate\Support\Carbon|null $scheduled_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ */
+
 #[Fillable([
     'classroom_id',
     'subject_id',
@@ -33,6 +38,7 @@ class ClassSchedule extends Model
         return [
             'scheduled_at' => 'datetime',
             'duration_minutes' => 'integer',
+            'created_at' => 'datetime',
         ];
     }
 
