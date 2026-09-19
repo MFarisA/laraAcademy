@@ -16,7 +16,7 @@ enum AcademicPermissionEnum: string implements PermissionInterface
     case CLASSROOM_MANAGE = 'academics.classrooms.manage';
     case ENROLLMENTS_MANAGE = 'academics.enrollments.manage';
 
-    #[Override]
+    // [Override]
     public function label(): string
     {
         return match ($this) {
@@ -35,7 +35,7 @@ enum AcademicPermissionEnum: string implements PermissionInterface
         return 'Academic';
     }
 
-    #[Override]
+    // #[Override]
     public static function toArray(): array
     {
         return array_map(

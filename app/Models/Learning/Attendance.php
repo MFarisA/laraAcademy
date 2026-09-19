@@ -2,6 +2,7 @@
 
 namespace App\Models\Learning;
 
+use App\Enum\Learning\AttendanceStatusEnum;
 use App\Models\User;
 use Database\Factories\Learning\AttendanceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -9,6 +10,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Override;
+
+/**
+ * @property \Illuminate\Support\Carbon|null $verified_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ */
 
 #[Fillable([
     'class_schedule_id',
@@ -25,7 +31,9 @@ class Attendance extends Model
     public function casts()
     {
         return [
+            'status' => AttendanceStatusEnum::class,
             'verified_at' => 'datetime',
+            'created_at' => 'datetime',
         ];
     }
 
