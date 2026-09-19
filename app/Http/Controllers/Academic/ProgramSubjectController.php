@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Academic;
 
-use App\Actions\Action\Academic\SyncProgramSubjectsAction;
+use App\Actions\Academic\SyncProgramSubjectsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Program\SyncProgramSubjectsRequest;
 use App\Models\Academic\Program;
@@ -16,6 +16,7 @@ class ProgramSubjectController extends Controller
         SyncProgramSubjectsAction $action
     ): RedirectResponse {
         $action->handle($programs, $request->validated('subjects', []));
+
         return back()->with('success', 'Program subjects successfully updated');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Account\User;
 
-use App\Actions\Action\Account\User\DeleteUserAction;
-use App\Actions\Action\Account\User\StoreUserAction;
-use App\Actions\Action\Account\User\UpdateUserAction;
+use App\Actions\Account\User\DeleteUserAction;
+use App\Actions\Account\User\StoreUserAction;
+use App\Actions\Account\User\UpdateUserAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Account\User\StoreUserRequest;
 use App\Http\Requests\Account\User\UpdateUserRequest;
@@ -39,29 +39,30 @@ class UserController extends Controller
     {
         $storeUser->handle($request->validated());
 
-        return to_route('users.index')->with('success', 'users successfully created.');
+        return to_route('users.index')->with('success', 'User created successfully');
     }
 
-    public function show(User $user): Response
+    public function edit(User $user): Response
     {
-        return Inertia::render('Users/Show', [
-            'Users' => new UserResource($user),
+        Gate::authorize('update', $user);
+
+        return Inertia::render('Users/Edit', [
+            'user' => new UserResource($user->load(['branch', 'roles'])),
         ]);
     }
 
     public function update(UpdateUserRequest $request, User $user, UpdateUserAction $updateUser): RedirectResponse
     {
-        $data = $request->validated();
-        $updateUser->handle($user, $data);
+        $updateUser->handle($user, $request->validated());
 
-        return to_route('users.index')->with('success', 'users successfully updated.');
+        return to_route('users.index')->with('success', 'User updated successfully');
     }
 
     public function destroy(User $user, DeleteUserAction $deleteUser): RedirectResponse
     {
+        Gate::authorize('delete', $user);
         $deleteUser->handle($user);
-        session()->flash('success', 'Branch successfully deleted.');
 
-        return to_route('users.index');
+        return to_route('users.index')->with('success', 'User deleted successfully');
     }
 }

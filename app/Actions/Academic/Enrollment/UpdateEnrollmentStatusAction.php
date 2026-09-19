@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Academic\Enrollment;
+namespace App\Actions\Academic\Enrollment;
 
 use App\Enum\Academic\EnrollmentStatusEnum;
 use App\Models\Academic\Classroom;
@@ -14,7 +14,7 @@ class UpdateEnrollmentStatusAction
     public function handle(Classroom $classroom, User $student, EnrollmentStatusEnum $status): void
     {
         $classroom->students()->updateExistingPivot($student->id, [
-            'status' => $status->value
+            'status' => $status->value,
         ]);
     }
 }

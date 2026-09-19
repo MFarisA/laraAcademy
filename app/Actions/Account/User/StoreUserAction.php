@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Account\User;
+namespace App\Actions\Account\User;
 
 use App\Models\User;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -10,7 +10,7 @@ class StoreUserAction
     use AsAction;
 
     /**
-     * @param array<mixed> $data
+     * @param  array<mixed>  $data
      */
     public function handle(array $data): User
     {
@@ -21,6 +21,7 @@ class StoreUserAction
         if (! empty($role)) {
             $user->assignRole($role);
         }
+
         return $user;
     }
 }

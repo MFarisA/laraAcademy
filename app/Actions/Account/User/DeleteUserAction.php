@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Account\User;
+namespace App\Actions\Account\User;
 
 use App\Models\User;
 use Lorisleiva\Actions\Concerns\AsAction;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Account\User;
+namespace App\Actions\Account\User;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +11,7 @@ class UpdateUserAction
     use AsAction;
 
     /**
-     * @param array<mixed> $data
+     * @param  array<mixed>  $data
      */
     public function handle(User $user, array $data): User
     {
@@ -26,6 +26,7 @@ class UpdateUserAction
             if ($role !== null) {
                 $user->syncRoles($role);
             }
+
             return $user;
         });
     }

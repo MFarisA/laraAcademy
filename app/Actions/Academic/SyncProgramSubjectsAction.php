@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Academic;
+namespace App\Actions\Academic;
 
 use App\Models\Academic\Program;
 use Illuminate\Support\Facades\DB;
@@ -17,13 +17,14 @@ class SyncProgramSubjectsAction
     {
         // Ubah format [{id: 1, min_passing_score: 65}] -> [1 => ['min_passing_score' => 65]]
         $syncData = collect($subjectsData)
-            ->mapWithKeys(fn(array $item) => [
+            ->mapWithKeys(fn (array $item) => [
                 $item['id'] => ['min_passing_score' => $item['min_passing_score']],
             ])
             ->all();
 
         return DB::transaction(function () use ($program, $syncData) {
             $program->subjects()->sync($syncData);
+
             return $program->load('subjects');
         });
     }

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Actions\Action\Academic\Attendance;
+namespace App\Actions\Academic\Attendance;
 
 use App\DTO\Learning\Attendance\AttendanceSummaryData;
 use App\Enum\Learning\AttendanceStatusEnum;
 use App\Models\Academic\Classroom;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsAction;
-use Illuminate\Database\Eloquent\Builder;
 
-class GetAttendaceSummaryAction
+class GetAttendanceSummaryAction
 {
     use AsAction;
 
@@ -41,15 +41,15 @@ class GetAttendaceSummaryAction
         ])
             ->get()
             ->map(function ($student): AttendanceSummaryData {
-                $totalSessions  = (int) ($student->getAttribute('total_sessions') ?? 0);
-                $presentCount   = (int) ($student->getAttribute('present_count') ?? 0);
-                $absentCount    = (int) ($student->getAttribute('absent_count') ?? 0);
-                $sickCount      = (int) ($student->getAttribute('sick_count') ?? 0);
+                $totalSessions = (int) ($student->getAttribute('total_sessions') ?? 0);
+                $presentCount = (int) ($student->getAttribute('present_count') ?? 0);
+                $absentCount = (int) ($student->getAttribute('absent_count') ?? 0);
+                $sickCount = (int) ($student->getAttribute('sick_count') ?? 0);
                 $permittedCount = (int) ($student->getAttribute('permitted_count') ?? 0);
 
                 return new AttendanceSummaryData(
-                    studentId: (int) $student->id,
-                    studentName: (string) $student->name,
+                    studentId: $student->id,
+                    studentName: $student->name,
                     totalSessions: $totalSessions,
                     presentCount: $presentCount,
                     absentCount: $absentCount,

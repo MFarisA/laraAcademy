@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Academic\Enrollment;
+namespace App\Actions\Academic\Enrollment;
 
 use App\Enum\Academic\EnrollmentStatusEnum;
 use App\Models\Academic\Classroom;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Lorisleiva\Actions\Concerns\AsAction;
 
-class EnrollmentStudentAction
+class EnrollStudentAction
 {
     use AsAction;
 
@@ -42,7 +42,7 @@ class EnrollmentStudentAction
             // 4. Validasi kapasitas kelas
             if ($activeStudentCount >= $lockedClassroom->capacity) {
                 throw ValidationException::withMessages([
-                    'classroom_id' => 'Kapasitas kelas sudah penuh (maksimal' . $lockedClassroom->capacity . 'siswa).',
+                    'classroom_id' => 'Kapasitas kelas sudah penuh (maksimal'.$lockedClassroom->capacity.'siswa).',
                 ]);
             }
 
@@ -51,6 +51,7 @@ class EnrollmentStudentAction
                 'status' => EnrollmentStatusEnum::ACTIVE->value,
                 'enrolled_at' => now(),
             ]);
+
             return $lockedClassroom->load('students');
         });
     }

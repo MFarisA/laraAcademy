@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Learning;
 
-use App\Actions\Action\Academic\Attendance\GetAttendaceSummaryAction;
-use App\Actions\Action\Academic\Attendance\RecordAttendaceAction;
+use App\Actions\Academic\Attendance\GetAttendanceSummaryAction;
+use App\Actions\Academic\Attendance\RecordAttendanceAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Learning\Attendance\RecordAttendanceRequest;
 use App\Http\Resources\Learning\Attendance\AttendanceSummaryResource;
@@ -17,9 +17,10 @@ class AttendanceController extends Controller
 {
     public function attendanceSummary(
         Classroom $classroom,
-        GetAttendaceSummaryAction $action
+        GetAttendanceSummaryAction $action
     ): Response {
         $summaries = $action->handle($classroom);
+
         return Inertia::render('Learning/Attendance/Summary', [
             'classroom' => $classroom->only('id', 'name'),
             'summaries' => AttendanceSummaryResource::collection($summaries),
@@ -29,7 +30,7 @@ class AttendanceController extends Controller
     public function recordAttendance(
         RecordAttendanceRequest $request,
         ClassSchedule $schedule,
-        RecordAttendaceAction $action
+        RecordAttendanceAction $action
     ): RedirectResponse {
         $action->handle($schedule, $request->validated('attendances'));
 
