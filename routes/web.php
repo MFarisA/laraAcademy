@@ -8,6 +8,7 @@ use App\Http\Controllers\Academic\ProgramController;
 use App\Http\Controllers\Academic\ProgramSubjectController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Account\User\UserController;
+use App\Http\Controllers\Learning\AttendanceController;
 use App\Http\Controllers\Learning\ClassScheduleController;
 use App\Http\Controllers\Organization\Branch\BranchController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,11 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
         ->name('classrooms.enrollments.update');
     Route::delete('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'destroy'])
         ->name('classrooms.enrollments.destroy');
+
+    Route::get('classrooms/{classroom}/attendance-summary', [AttendanceController::class, 'attendanceSummary'])
+        ->name('classrooms.attendance.summary');
+    Route::post('schedules/{schedule}/attendances', [AttendanceController::class, 'recordAttendance'])
+        ->name('schedules.attendances.record');
 });
 
 Route::middleware(['auth', 'verified', 'permission:' . UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
