@@ -10,6 +10,7 @@ use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Account\User\UserController;
 use App\Http\Controllers\Learning\AttendanceController;
 use App\Http\Controllers\Learning\ClassScheduleController;
+use App\Http\Controllers\Learning\LearningMaterialController;
 use App\Http\Controllers\Organization\Branch\BranchController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,9 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'permission:' . UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
     Route::resource('users', UserController::class);
+    Route::get('materials/{material}/stream', [LearningMaterialController::class, 'stream'])
+        ->name('materials.stream')
+        ->middleware('signed');
 });
 
 require __DIR__ . '/settings.php';
