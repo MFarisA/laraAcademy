@@ -2,6 +2,7 @@
 
 namespace App\Models\Assessment\Question;
 
+use App\Enum\Assessment\GradingRuleEnum;
 use App\Models\Academic\Subject;
 use App\Models\Assessment\Exam\ExamSection;
 use App\Models\Assessment\Exam\ExamSectionQuestion;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'subject_id',
@@ -23,7 +25,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Question extends Model
 {
     /** @use HasFactory<QuestionFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    #[\Override]
+    /**
+     * @return array{grading_rule: GradingRuleEnum}
+     */
+    public function casts(): array
+    {
+        return [
+            'grading_rule' => GradingRuleEnum::class,
+        ];
+    }
 
     /**
      * @return BelongsTo<Subject, $this>
