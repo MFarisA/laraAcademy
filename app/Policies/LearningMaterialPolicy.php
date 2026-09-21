@@ -2,8 +2,10 @@
 
 namespace App\Policies;
 
+use App\Enum\Access\RoleRegistryEnum;
 use App\Models\Learning\LearningMaterial;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class LearningMaterialPolicy
 {
@@ -20,19 +22,26 @@ class LearningMaterialPolicy
      */
     public function view(User $user, LearningMaterial $material): bool
     {
-        if ($user->hasRole('admin')) {
+        if ($user->hasAnyRole([
+            RoleRegistryEnum::ADMINBRANCH->value,
+            RoleRegistryEnum::INSTRUCTOR->value,
+        ])) {
             return true;
         }
-
         // Cek apakah siswa memiliki enrollment aktif di kelas yang mempelajari subject ini
         return $user->enrollments()
             ->where('status', 'active')
-            ->whereHas('classroom', function ($query) use ($material) {
-                $query->where('subject_id', $material->subject_id);
-
-                if ($material->program_id !== null) {
-                    $query->where('program_id', $material->program_id);
-                }
+            ->whereHas('classroom', function (Builder $query) use ($material) {
+                $query->whereHas('batch', function (Builder $batchQuery) use ($material) {
+                    if ($material->program_id !== null) {
+                        $batchQuery->where('program_id', $material->program_id);
+                    }
+                    $batchQuery->whereHas('program', function (Builder $programQuery) use ($material) {
+                        $programQuery->whereHas('subjects', function (Builder $subjectQuery) use ($material) {
+                            $subjectQuery->where('subjects.id', $material->subject_id);
+                        });
+                    });
+                });
             })
             ->exists();
     }
@@ -42,14 +51,21 @@ class LearningMaterialPolicy
      */
     public function download(User $user, LearningMaterial $material): bool
     {
-        if (!$this->view($user, $material)) {
+        // Wajib lolos hak akses view terlebih dahulu
+        if (! $this->view($user, $material)) {
             return false;
         }
 
-        if (!$user->hasRole('admin') && !$material->is_downloadable) {
-            return false;
+        // Staf cabang & instruktur bebas mengunduh file
+        if ($user->hasAnyRole([
+            RoleRegistryEnum::INSTRUCTOR->value,
+            RoleRegistryEnum::ADMINBRANCH->value,
+        ])) {
+            return true;
         }
-        return true;
+
+        // Untuk student: patuhi flag is_downloadable
+        return $material->is_downloadable;
     }
 
     /**
@@ -57,7 +73,10 @@ class LearningMaterialPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            RoleRegistryEnum::ADMINBRANCH->value,
+            RoleRegistryEnum::INSTRUCTOR->value,
+        ]);
     }
 
     /**

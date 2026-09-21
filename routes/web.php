@@ -18,6 +18,9 @@ Route::inertia('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('materials/{material}/stream', [LearningMaterialController::class, 'stream'])
+        ->name('materials.stream')
+        ->middleware('signed');
 });
 
 Route::middleware(['auth', 'verified', 'role:super-admin|admin-branch'])->group(function () {
@@ -26,6 +29,8 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin-branch'])->group(
 
 Route::middleware(['auth', 'verified', 'role:instructor|super-admin'])->group(function () {
     Route::inertia('schedules', 'dashboard')->name('schedules.index');
+    Route::post('materials', [LearningMaterialController::class, 'store'])->name('materials.store');
+    Route::get('subjects/{subject}/materials', [LearningMaterialController::class, 'index'])->name('subjects.materials.index');
 });
 
 Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
@@ -51,11 +56,8 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
         ->name('schedules.attendances.record');
 });
 
-Route::middleware(['auth', 'verified', 'permission:' . UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
+Route::middleware(['auth', 'verified', 'permission:'.UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
     Route::resource('users', UserController::class);
-    Route::get('materials/{material}/stream', [LearningMaterialController::class, 'stream'])
-        ->name('materials.stream')
-        ->middleware('signed');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

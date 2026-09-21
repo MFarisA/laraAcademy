@@ -22,6 +22,8 @@ class ClassroomEnrollment extends Pivot
     /** @use HasFactory<ClassroomEnrollmentFactory> */
     use HasFactory;
 
+    protected $table = 'classroom_enrollments';
+
     #[Override]
     public function casts()
     {

@@ -33,18 +33,19 @@ class LearningMaterialController extends Controller
 
     public function store(UploadLearningMaterialRequest $request): RedirectResponse
     {
-        UploadLearningMaterialAction::run([
+        UploadLearningMaterialAction::run(
             $request->file('file'),
             $request->validated(),
-        ]);
+        );
+
         return back()->with('success', 'Materi pembelajaran berhasil diunggah');
     }
 
-    public function stream(StreamLearningMaterialRequest $request, LearningMaterial $material): StreamedResponse | BinaryFileResponse
+    public function stream(StreamLearningMaterialRequest $request, LearningMaterial $material): StreamedResponse|BinaryFileResponse
     {
         return StreamLearningMaterialAction::run(
             $material,
-            $request->validated()
+            $request->boolean('download')
         );
     }
 }

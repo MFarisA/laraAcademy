@@ -23,12 +23,12 @@ class UploadLearningMaterialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject_id' => ['required', 'int', 'exists:subject,id'],
-            'program_id' => ['required', 'int', 'exists:program,id'],
+            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'program_id' => ['nullable', 'integer', 'exists:programs,id'],
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'max:20'],
-            'is_downloadable' => ['requred', 'boolean'],
-            'file_url' => ['required', 'file', 'max:51200'],
+            'is_downloadable' => ['required', 'boolean'],
+            'file' => ['required', 'file', 'max:51200'],
         ];
     }
 }
