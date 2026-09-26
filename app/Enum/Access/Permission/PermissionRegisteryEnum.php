@@ -33,6 +33,7 @@ enum PermissionRegisteryEnum
                 array_column($enumClass::cases(), 'value')
             );
         }
+
         return $permission;
     }
 
@@ -48,6 +49,7 @@ enum PermissionRegisteryEnum
                 'permissions' => $enumClass::toArray(),
             ];
         }
+
         return $grouped;
     }
 }

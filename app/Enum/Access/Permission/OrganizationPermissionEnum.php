@@ -35,7 +35,7 @@ enum OrganizationPermissionEnum: string implements PermissionInterface
     public static function toArray(): array
     {
         return array_map(
-            fn(self $permission) => [
+            fn (self $permission) => [
                 'value' => $permission->value,
                 'label' => $permission->label(),
             ],

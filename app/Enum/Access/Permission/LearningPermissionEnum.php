@@ -16,7 +16,6 @@ enum LearningPermissionEnum: string implements PermissionInterface
     case MATERIALS_MANAGE = 'learning.materials.manage';
     case MATERIALS_DOWNLOAD = 'learning.materials.download';
 
-
     public function label(): string
     {
         return match ($this) {
@@ -30,6 +29,7 @@ enum LearningPermissionEnum: string implements PermissionInterface
             self::MATERIALS_DOWNLOAD => 'Download Learning Materials',
         };
     }
+
     #[Override]
     public static function group(): string
     {
@@ -40,7 +40,7 @@ enum LearningPermissionEnum: string implements PermissionInterface
     public static function toArray(): array
     {
         return array_map(
-            fn(self $permission) => [
+            fn (self $permission) => [
                 'value' => $permission->value,
                 'label' => $permission->label(),
             ],

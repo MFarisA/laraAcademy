@@ -2,8 +2,6 @@
 
 namespace App\Enum\Access;
 
-use Override;
-
 use function array_column;
 
 enum RoleRegistryEnum: string
