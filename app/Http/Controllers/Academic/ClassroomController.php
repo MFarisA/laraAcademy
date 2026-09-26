@@ -2,53 +2,85 @@
 
 namespace App\Http\Controllers\Academic;
 
+use App\Actions\Academic\Classroom\CreateClassroomAction;
+use App\Actions\Academic\Classroom\DeleteClassroomAction;
+use App\Actions\Academic\Classroom\UpdateClassroomAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Classroom\StoreClassroomRequest;
 use App\Http\Requests\Academic\Classroom\UpdateClassroomRequest;
-use App\Http\Resources\Academic\ClassRoomResource;
+use App\Http\Resources\Academic\Classroom\ClassRoomResource;
 use App\Models\Academic\Classroom;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-
 class ClassroomController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(): Response
     {
-        $classRoom = Classroom::query()
-            ->with(['branch', 'batch'])
-            ->latest()
-            ->withCount('students')
-            ->paginate(15);
+        $classRoom = Classroom::query()->with(['batch', 'branch'])->paginate(10);
 
-        return Inertia::render('Classrooms/Index', [
+        return Inertia::render('Academic/Classroom/Index', [
             'Classrooms' => ClassRoomResource::collection($classRoom),
         ]);
     }
 
-    public function store(StoreClassroomRequest $request): RedirectResponse
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        Classroom::create($request->validated());
-        return to_route('classrooms.index')->with('success', 'Classrooms successfully created.');
+        //
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreClassroomRequest $request): RedirectResponse
+    {
+        CreateClassroomAction::run($request->validated());
+
+        return back()->with('success', 'Classroom created successfully');
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(Classroom $classroom): Response
     {
-        return Inertia::render('Classrooms/Show', [
-            'classroom' => ClassroomResource::make($classroom->load(['batch', 'branch'])),
+        return Inertia::render('Academic/Classroom/Show', [
+            'classroom' => ClassRoomResource::make($classroom->load(['batch', 'branch'])),
         ]);
     }
 
-    public function update(UpdateClassroomRequest $request, Classroom $classroom): RedirectResponse
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        $classroom->update($request->validated());
-        return to_route('classrooms.index')->with('success', 'Classrooms successfully created.');
+        //
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateClassroomRequest $request, Classroom $classroom): RedirectResponse
+    {
+        UpdateClassroomAction::run($classroom, $request->validated());
+
+        return back()->with('success', 'Classroom updated successfully');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Classroom $classroom): RedirectResponse
     {
-        $classroom->delete();
-        return to_route('classrooms.index')->with('success', 'Classrooms successfully deleted.');
+        DeleteClassroomAction::run($classroom);
+
+        return back()->with('success', 'Classroom deleted successfully');
     }
 }

@@ -28,6 +28,7 @@ class ClassScheduleController extends Controller
     public function store(StoreClassScheduleRequest $request): RedirectResponse
     {
         ClassSchedule::create($request->validated());
+
         return to_route('schedules.index')->with('success', 'schedules successfully created.');
     }
 
@@ -41,12 +42,14 @@ class ClassScheduleController extends Controller
     public function update(UpdateClassScheduleRequest $request, ClassSchedule $schedule): RedirectResponse
     {
         $schedule->update($request->validated());
+
         return to_route('schedules.index')->with('success', 'schedules successfully updated.');
     }
 
     public function destroy(ClassSchedule $schedule): RedirectResponse
     {
         $schedule->delete();
+
         return to_route('schedules.index')->with('success', 'schedules successfully deleted.');
     }
 }
