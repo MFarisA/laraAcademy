@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Academic;
 
-use App\Actions\Academic\Batch\CreateBatchAction;
-use App\Actions\Academic\Batch\DeleteBatchAction;
-use App\Actions\Academic\Batch\UpdateBatchAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Batch\StoreBatchRequest;
 use App\Http\Requests\Academic\Batch\UpdateBatchRequest;
@@ -29,19 +26,11 @@ class BatchController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreBatchRequest $request): RedirectResponse
     {
-        CreateBatchAction::run($request->validated());
+        Batch::create($request->validated());
 
         return back()->with('success', 'Batch created successfully');
     }
@@ -57,19 +46,12 @@ class BatchController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateBatchRequest $request, Batch $batch): RedirectResponse
     {
-        UpdateBatchAction::run($batch, $request->validated());
+        // UpdateBatchAction::run($batch, $request->validated());
+        $batch->update($request->validated());
 
         return back()->with('success', 'Batch updated successfully');
     }
@@ -79,7 +61,8 @@ class BatchController extends Controller
      */
     public function destroy(Batch $batch): RedirectResponse
     {
-        DeleteBatchAction::run($batch);
+        // DeleteBatchAction::run($batch);
+        $batch->delete();
 
         return back()->with('success', 'Batch deleted successfully');
     }

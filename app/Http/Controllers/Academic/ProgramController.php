@@ -29,19 +29,11 @@ class ProgramController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreProgramRequest $request): RedirectResponse
     {
-        CreateProgramAction::run($request->validated());
+        Program::create($request->validated());
 
         return back()->with('success', 'Program created successfully');
     }
@@ -57,19 +49,11 @@ class ProgramController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateProgramRequest $request, Program $program): RedirectResponse
     {
-        UpdateProgramAction::run($program, $request->validated());
+        $program->update($request->validated());
 
         return back()->with('success', 'Program updated successfully');
     }
@@ -79,7 +63,7 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program): RedirectResponse
     {
-        DeleteProgramAction::run($program);
+        $program->delete();
 
         return back()->with('success', 'Program deleted successfully');
     }

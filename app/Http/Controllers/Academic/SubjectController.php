@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Academic;
 
-use App\Actions\Academic\Subject\CreateSubjectAction;
-use App\Actions\Academic\Subject\DeleteSubjectAction;
-use App\Actions\Academic\Subject\UpdateSubjectAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Subject\StoreSubjectRequest;
 use App\Http\Requests\Academic\Subject\UpdateSubjectRequest;
@@ -29,19 +26,11 @@ class SubjectController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreSubjectRequest $request): RedirectResponse
     {
-        CreateSubjectAction::run($request->validated());
+        Subject::create($request->validated());
 
         return back()->with('success', 'Subject created successfully');
     }
@@ -57,19 +46,11 @@ class SubjectController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateSubjectRequest $request, Subject $subject): RedirectResponse
     {
-        UpdateSubjectAction::run($subject, $request->validated());
+        $subject->update($request->validated());
 
         return back()->with('success', 'Subject updated successfully');
     }
@@ -79,7 +60,7 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject): RedirectResponse
     {
-        DeleteSubjectAction::run($subject);
+        $subject->delete();
 
         return back()->with('success', 'Subject deleted successfully');
     }

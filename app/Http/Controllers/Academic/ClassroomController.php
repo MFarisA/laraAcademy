@@ -29,19 +29,11 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreClassroomRequest $request): RedirectResponse
     {
-        CreateClassroomAction::run($request->validated());
+        Classroom::create($request->validated());
 
         return back()->with('success', 'Classroom created successfully');
     }
@@ -57,19 +49,11 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateClassroomRequest $request, Classroom $classroom): RedirectResponse
     {
-        UpdateClassroomAction::run($classroom, $request->validated());
+        $classroom->update($request->validated());
 
         return back()->with('success', 'Classroom updated successfully');
     }
@@ -79,7 +63,7 @@ class ClassroomController extends Controller
      */
     public function destroy(Classroom $classroom): RedirectResponse
     {
-        DeleteClassroomAction::run($classroom);
+        $classroom->delete();
 
         return back()->with('success', 'Classroom deleted successfully');
     }
