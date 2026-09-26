@@ -28,6 +28,7 @@ class LearningMaterialPolicy
         ])) {
             return true;
         }
+
         // Cek apakah siswa memiliki enrollment aktif di kelas yang mempelajari subject ini
         return $user->enrollments()
             ->where('status', 'active')

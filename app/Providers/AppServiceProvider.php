@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-        Gate::before(fn($user) => $user->hasRole(RoleRegistryEnum::SUPERADMIN->value) ? true : null);
+        Gate::before(fn ($user) => $user->hasRole(RoleRegistryEnum::SUPERADMIN->value) ? true : null);
     }
 
     /**
@@ -43,13 +43,13 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Password::defaults(
-            fn(): ?Password => app()->isProduction()
+            fn (): ?Password => app()->isProduction()
                 ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
                 : null,
         );
     }
