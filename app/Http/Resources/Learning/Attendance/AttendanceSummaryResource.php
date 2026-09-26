@@ -9,7 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin AttendanceSummaryData
  */
-
 class AttendanceSummaryResource extends JsonResource
 {
     /**

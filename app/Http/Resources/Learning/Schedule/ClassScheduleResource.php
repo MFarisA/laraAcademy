@@ -2,8 +2,9 @@
 
 namespace App\Http\Resources\Learning\Schedule;
 
-use App\Http\Resources\Academic\ClassRoomResource;
-use App\Http\Resources\Academic\SubjectResource;
+use App\Http\Resources\Academic\Classroom\ClassRoomResource;
+use App\Http\Resources\Academic\Subject\SubjectResource;
+use App\Http\Resources\Account\User\UserResource;
 use App\Models\Learning\ClassSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,21 +23,14 @@ class ClassScheduleResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'classroom_id' => $this->classroom_id,
-            'subject_id' => $this->subject_id,
-            'instructor_id' => $this->instructor_id,
             'room_type' => $this->room_type,
             'meeting_link' => $this->meeting_link,
-            'scheduled_at' => $this->scheduled_at?->toIsoString(),
+            'scheduled_at' => $this->scheduled_at,
             'duration_minutes' => $this->duration_minutes,
+
+            'instructor' => UserResource::make($this->whenLoaded('instructor')),
             'classroom' => ClassRoomResource::make($this->whenLoaded('classroom')),
             'subject' => SubjectResource::make($this->whenLoaded('subject')),
-            'instructor' => $this->whenLoaded('instructor', fn() => [
-                'id' => $this->instructor->id,
-                'name' => $this->instructor->name,
-                'email' => $this->instructor->email,
-            ]),
-            'created_at' => $this->created_at?->toIsoString(),
         ];
     }
 }

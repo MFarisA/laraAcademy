@@ -20,6 +20,7 @@ class LearningMaterialResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isExternalLink = $this->type === 'link';
+
         return [
             'subject_id' => $this->subject_id,
             'program_id' => $this->program_id,
