@@ -15,9 +15,9 @@ beforeEach(function () {
 
 test('test create branch', function () {
     $payload = [
-        'name'    => 'Cabang Jakarta Selatan',
-        'code'    => 'JKT-01',
-        'city'    => 'Jakarta',
+        'name' => 'Cabang Jakarta Selatan',
+        'code' => 'JKT-01',
+        'city' => 'Jakarta',
         'address' => 'Jl. Sudirman No. 123',
     ];
     $response = $this->actingAs($this->superAdmin)->post(route('branches.store'), $payload);
@@ -65,9 +65,9 @@ test('super admin can update a branch', function () {
     ]);
 
     $payload = [
-        'name'    => 'Cabang Baru Diperbarui',
-        'code'    => 'NEW-01',
-        'city'    => 'Bandung',
+        'name' => 'Cabang Baru Diperbarui',
+        'code' => 'NEW-01',
+        'city' => 'Bandung',
         'address' => 'Jl. Asia Afrika No. 45',
     ];
 
@@ -78,7 +78,7 @@ test('super admin can update a branch', function () {
     $response->assertSessionHas('success', 'Branch successfully updated.');
 
     $this->assertDatabaseHas('branches', [
-        'id'   => $branch->id,
+        'id' => $branch->id,
         'name' => 'Cabang Baru Diperbarui',
         'code' => 'NEW-01',
     ]);

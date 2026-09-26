@@ -11,12 +11,13 @@ class UploadLearningMaterialAction
     use AsAction;
 
     /**
-     * @param array<mixed> $data
+     * @param  array<mixed>  $data
      */
     public function handle(UploadedFile $file, array $data): LearningMaterial
     {
         $path = $file->store("materials/{$data['subject_id']}");
         $data['file_url'] = $path;
+
         return LearningMaterial::create($data);
     }
 }

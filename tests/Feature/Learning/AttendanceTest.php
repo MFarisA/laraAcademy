@@ -153,7 +153,7 @@ test('can retrieve attendance summary for a classroom', function () {
 
     $response->assertOk();
     $response->assertInertia(
-        fn($page) => $page
+        fn ($page) => $page
             ->component('Learning/Attendance/Summary')
             ->has('classroom')
             ->has('summaries.data', 2)
