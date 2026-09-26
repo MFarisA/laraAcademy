@@ -24,7 +24,9 @@ class QuestionOptionResource extends JsonResource
             'option_label' => $this->option_label,
             'option_text' => $this->option_text,
             'is_correct' => $this->is_correct,
-            'weight_score' => $this->weight_score,
+            'weight_score' => (float) $this->weight_score,
+            'created_at' => $this->created_at?->toIsoString(),
+            'updated_at' => $this->updated_at?->toIsoString(),
         ];
     }
 }

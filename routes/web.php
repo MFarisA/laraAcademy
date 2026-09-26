@@ -6,6 +6,7 @@ use App\Http\Controllers\Academic\ClassroomController;
 use App\Http\Controllers\Academic\ClassroomEnrollmentController;
 use App\Http\Controllers\Academic\ProgramController;
 use App\Http\Controllers\Academic\ProgramSubjectController;
+use App\Http\Controllers\Academic\QuestionController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Account\User\UserController;
 use App\Http\Controllers\Learning\AttendanceController;
@@ -40,6 +41,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
     Route::resource('batches', BatchController::class);
     Route::resource('classrooms', ClassroomController::class);
     Route::resource('schedules', ClassScheduleController::class);
+    Route::resource('questions', QuestionController::class);
 
     Route::put('programs/{programs}/subjects', [ProgramSubjectController::class, 'update'])->name('programs.subjects.update');
 

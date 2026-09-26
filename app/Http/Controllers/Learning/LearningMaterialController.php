@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Learning;
 
-use App\Actions\Action\Academic\LearningMaterial\StreamLearningMaterialAction;
-use App\Actions\Action\Academic\LearningMaterial\UploadLearningMaterialAction;
+use App\Actions\Learning\Material\StreamLearningMaterialAction;
+use App\Actions\Learning\Material\UploadLearningMaterialAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Learning\LearningMaterial\StreamLearningMaterialRequest;
 use App\Http\Requests\Learning\LearningMaterial\UploadLearningMaterialRequest;
@@ -23,11 +23,10 @@ class LearningMaterialController extends Controller
         $material = LearningMaterial::query()
             ->where('subject_id', $subject->id)
             ->latest()
-            ->paginate(15);
+            ->paginate(10);
 
         return Inertia::render('Learning/Material/Index', [
-            'subject' => $subject->only(['id', 'name']),
-            'materials' => LearningMaterialResource::collection($material)->resolve(),
+            'material' => LearningMaterialResource::collection($material),
         ]);
     }
 

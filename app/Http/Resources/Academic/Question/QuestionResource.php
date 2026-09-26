@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Academic\Question;
 
+use App\Http\Resources\Academic\Subject\SubjectResource;
 use App\Models\Assessment\Question\Question;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,12 +22,14 @@ class QuestionResource extends JsonResource
         return [
             'id' => $this->id,
             'subject_id' => $this->subject_id,
+            'subject' => SubjectResource::collection($this->whenLoaded('subjects')),
             'question_text' => $this->question_text,
             'image_url' => $this->image_url,
             'grading_rule' => $this->grading_rule,
             'difficulty_level' => $this->difficulty_level,
             'options' => QuestionOptionResource::collection($this->whenLoaded('options')),
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at?->toIsoString(),
+            'updated_at' => $this->updated_at?->toIsoString(),
         ];
     }
 }
