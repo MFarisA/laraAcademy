@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Academic;
 
-use App\Actions\Academic\Program\CreateProgramAction;
-use App\Actions\Academic\Program\DeleteProgramAction;
-use App\Actions\Academic\Program\UpdateProgramAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Program\StoreProgramRequest;
 use App\Http\Requests\Academic\Program\UpdateProgramRequest;
