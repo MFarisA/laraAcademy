@@ -35,6 +35,13 @@ class QuestionController extends Controller
         return back()->with('success', 'Question created successfully');
     }
 
+    public function show(Question $question): Response
+    {
+        return Inertia::render('Academic/Assessment/Show', [
+            'questions' => new QuestionResource($question),
+        ]);
+    }
+
     public function update(
         UpdateQuestionRequest $request,
         UpdateQuestionAction $action,
@@ -42,6 +49,12 @@ class QuestionController extends Controller
     ): RedirectResponse {
         $action->handle($questions, $request->validated());
 
+        return back()->with('success', 'Question updated successfully');
+    }
+
+    public function destroy(Question $question): RedirectResponse
+    {
+        (bool) $question->delete();
         return back()->with('success', 'Question updated successfully');
     }
 }
