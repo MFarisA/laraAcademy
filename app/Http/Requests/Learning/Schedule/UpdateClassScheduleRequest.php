@@ -48,9 +48,9 @@ class UpdateClassScheduleRequest extends FormRequest
                 $instructorId = $this->input('instructor_id');
                 if ($instructorId) {
                     $instructor = User::find($instructorId);
-                    if ($instructor instanceof User && !$instructor->hasAnyRole([
+                    if ($instructor instanceof User && ! $instructor->hasAnyRole([
                         RoleRegistryEnum::SUPERADMIN->value,
-                        RoleRegistryEnum::INSTRUCTOR->value
+                        RoleRegistryEnum::INSTRUCTOR->value,
                     ])) {
                         $validator->errors()->add('instructor_id', 'user yang dipilih bukan seorang instruktur.');
                     }

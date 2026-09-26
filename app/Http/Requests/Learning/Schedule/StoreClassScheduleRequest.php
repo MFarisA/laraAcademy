@@ -7,8 +7,8 @@ use App\Enum\Learning\RoomTypeEnum;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class StoreClassScheduleRequest extends FormRequest
 {
@@ -49,9 +49,9 @@ class StoreClassScheduleRequest extends FormRequest
                 if ($instructorId) {
                     /** @var User|null $instructor */
                     $instructor = User::find($instructorId);
-                    if ($instructor && !$instructor->hasAnyRole([
+                    if ($instructor && ! $instructor->hasAnyRole([
                         RoleRegistryEnum::INSTRUCTOR->value,
-                        RoleRegistryEnum::SUPERADMIN->value
+                        RoleRegistryEnum::SUPERADMIN->value,
                     ])) {
                         $validator->errors()->add('instructor_id', 'user yang dipilih bukan seorang instruktur.');
                     }

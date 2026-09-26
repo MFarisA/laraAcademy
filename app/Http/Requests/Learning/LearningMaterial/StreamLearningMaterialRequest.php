@@ -18,7 +18,7 @@ class StreamLearningMaterialRequest extends FormRequest
             return false;
         }
 
-        /**@var LearningMaterial $material */
+        /** @var LearningMaterial $material */
         $material = $this->route('material');
 
         // 2. Verifikasi hak akses view (enrollment)
@@ -30,6 +30,7 @@ class StreamLearningMaterialRequest extends FormRequest
         if ($this->boolean('download') && $this->user()?->cannot('download', $material)) {
             return false;
         }
+
         return true;
     }
 

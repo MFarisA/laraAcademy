@@ -4,7 +4,6 @@ namespace App\Http\Requests\Academic\Batch;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Override;
 
 class StoreBatchRequest extends FormRequest
 {

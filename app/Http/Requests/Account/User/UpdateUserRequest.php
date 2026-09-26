@@ -28,6 +28,7 @@ class UpdateUserRequest extends FormRequest
     {
         $user = $this->route('users');
         $userId = $user instanceof User ? $user->id : $user;
+
         return [
             'email' => [
                 'required',
@@ -35,7 +36,7 @@ class UpdateUserRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:' . Rule::unique(User::class)->ignore($userId)
+                'unique:'.Rule::unique(User::class)->ignore($userId),
             ],
             'is_active' => ['sometimes', 'boolean'],
             'name' => ['required', 'string', 'max:255'],
