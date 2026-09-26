@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Action\Academic\LearningMaterial;
+namespace App\Actions\Learning\Material;
 
 use App\Models\Learning\LearningMaterial;
 use Illuminate\Support\Facades\Storage;
