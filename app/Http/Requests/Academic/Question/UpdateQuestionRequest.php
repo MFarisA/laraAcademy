@@ -27,12 +27,13 @@ class UpdateQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject_id' => ['sometimes', 'required', 'exists:subjects,id'],
-            'question_text' => ['sometimes', 'required', 'string'],
+            'subject_id' => ['sometimes', 'integer', 'exists:subjects,id'],
+            'question_text' => ['sometimes', 'string'],
             'image_url' => ['nullable', 'string', 'max:2048'],
-            'difficulty_level' => ['sometimes', 'required', 'in:easy,medium,hard'],
-            'grading_rule' => ['sometimes', 'required', Rule::enum(GradingRuleEnum::class)],
-            'options' => ['sometimes', 'required', 'array', 'min:2'],
+            'grading_rule' => ['sometimes', Rule::enum(GradingRuleEnum::class)],
+            'difficulty_level' => ['sometimes', 'in:easy,medium,hard'],
+            'options' => ['sometimes', 'array', 'min:1'],
+            'options.*.id' => ['nullable', 'integer', 'exists:question_options,id'],
             'options.*.option_label' => ['required_with:options', 'string', 'max:10'],
             'options.*.option_text' => ['required_with:options', 'string'],
             'options.*.is_correct' => ['nullable', 'boolean'],
@@ -51,8 +52,17 @@ class UpdateQuestionRequest extends FormRequest
                     return;
                 }
 
-                /** @var Question|null $question */
-                $question = $this->route('question');
+                $questionParam = $this->route('question');
+                $question = $questionParam instanceof Question
+                    ? $questionParam
+                    : null;
+
+                if (! $question && is_numeric($questionParam)) {
+                    $found = Question::query()->whereKey((int) $questionParam)->first();
+                    if ($found instanceof Question) {
+                        $question = $found;
+                    }
+                }
 
                 $rule = GradingRuleEnum::tryFrom((string) $this->input('grading_rule'))
                     ?? $question?->grading_rule;
@@ -69,7 +79,7 @@ class UpdateQuestionRequest extends FormRequest
                 } elseif ($rule == GradingRuleEnum::TKP) {
                     foreach ($options as $index => $opt) {
                         $weight = $opt['weight_score'] ?? null;
-                        if ($weight == null || (float) $weight < 1 || (float) $weight > 5) {
+                        if ($weight === null || (float) $weight < 1 || (float) $weight > 5) {
                             $validator->errors()->add(
                                 "options.{$index}.weight_score",
                                 'Untuk tipe TKP, setiap opsi harus memiliki bobot (weight_score) antara 1 sampai 5.'

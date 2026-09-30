@@ -18,7 +18,7 @@ class UpdateQuestionAction
     public function handle(Question $question, array $data): Question
     {
         return DB::transaction(function () use ($question, $data) {
-            $rawRule = $data['grading_rule'] ?? $question->grading_rule;
+            $rawRule = ! empty($data['grading_rule']) ? $data['grading_rule'] : $question->grading_rule;
             $gradingRule = $rawRule instanceof GradingRuleEnum
                 ? $rawRule
                 : GradingRuleEnum::from((string) $rawRule);
@@ -40,7 +40,7 @@ class UpdateQuestionAction
                 $question->options()->createMany($options);
             }
 
-            return $question->fresh(['subjects', 'options']) ?? $question;
+            return $question->fresh(['subject', 'options']) ?? $question;
         });
     }
 

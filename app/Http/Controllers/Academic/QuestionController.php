@@ -45,9 +45,9 @@ class QuestionController extends Controller
     public function update(
         UpdateQuestionRequest $request,
         UpdateQuestionAction $action,
-        Question $questions
+        Question $question
     ): RedirectResponse {
-        $action->handle($questions, $request->validated());
+        $action->handle($question, $request->validated());
 
         return back()->with('success', 'Question updated successfully');
     }
@@ -55,6 +55,7 @@ class QuestionController extends Controller
     public function destroy(Question $question): RedirectResponse
     {
         (bool) $question->delete();
+
         return back()->with('success', 'Question updated successfully');
     }
 }
