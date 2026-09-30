@@ -22,7 +22,7 @@ class QuestionResource extends JsonResource
         return [
             'id' => $this->id,
             'subject_id' => $this->subject_id,
-            'subject' => SubjectResource::collection($this->whenLoaded('subjects')),
+            'subject' => new SubjectResource($this->whenLoaded('subject')),
             'question_text' => $this->question_text,
             'image_url' => $this->image_url,
             'grading_rule' => $this->grading_rule,

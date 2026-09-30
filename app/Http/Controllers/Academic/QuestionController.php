@@ -21,7 +21,7 @@ class QuestionController extends Controller
             ->with(['subject', 'options'])
             ->paginate(15);
 
-        return Inertia::render('Academics/Assessment/Index', [
+        return Inertia::render('Academic/Assessment/Index', [
             'questions' => QuestionResource::collection($questions),
         ]);
     }
@@ -38,7 +38,7 @@ class QuestionController extends Controller
     public function show(Question $question): Response
     {
         return Inertia::render('Academic/Assessment/Show', [
-            'questions' => new QuestionResource($question),
+            'question' => new QuestionResource($question),
         ]);
     }
 
@@ -56,6 +56,6 @@ class QuestionController extends Controller
     {
         (bool) $question->delete();
 
-        return back()->with('success', 'Question updated successfully');
+        return back()->with('success', 'Question deleted successfully');
     }
 }
