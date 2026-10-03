@@ -40,7 +40,7 @@ class QuestionController extends Controller
     public function show(Question $question): Response
     {
         return Inertia::render('Academic/Assessment/Show', [
-            'question' => new QuestionResource($question),
+            'question' => new QuestionResource($question->load(['subject', 'options'])),
         ]);
     }
 
