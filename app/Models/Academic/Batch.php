@@ -20,10 +20,10 @@ class Batch extends Model
     /** @use HasFactory<BatchFactory> */
     use HasFactory;
 
-    #[\Override]
     /**
      * @return array{start_date: 'date', end_date: 'date'}
      */
+    #[\Override]
     public function casts(): array
     {
         return [

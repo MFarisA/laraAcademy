@@ -22,15 +22,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'grading_rule',
     'difficulty_level',
 ])]
+/**
+ * @property GradingRuleEnum $grading_rule
+ */
 class Question extends Model
 {
     /** @use HasFactory<QuestionFactory> */
     use HasFactory, SoftDeletes;
 
-    #[\Override]
     /**
-     * @return array{grading_rule: GradingRuleEnum}
+     * @return array<string, string>
      */
+    #[\Override]
     public function casts(): array
     {
         return [
