@@ -39,7 +39,9 @@ class UserController extends Controller
     {
         $storeUser->handle($request->validated());
 
-        return to_route('users.index')->with('success', 'User created successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User created successfully']);
+
+        return to_route('users.index');
     }
 
     public function edit(User $user): Response
@@ -55,7 +57,9 @@ class UserController extends Controller
     {
         $updateUser->handle($user, $request->validated());
 
-        return to_route('users.index')->with('success', 'User updated successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated successfully']);
+
+        return to_route('users.index');
     }
 
     public function destroy(User $user, DeleteUserAction $deleteUser): RedirectResponse
@@ -63,6 +67,8 @@ class UserController extends Controller
         Gate::authorize('delete', $user);
         $deleteUser->handle($user);
 
-        return to_route('users.index')->with('success', 'User deleted successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted successfully']);
+
+        return to_route('users.index');
     }
 }

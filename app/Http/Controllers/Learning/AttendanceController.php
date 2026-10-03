@@ -34,7 +34,8 @@ class AttendanceController extends Controller
     ): RedirectResponse {
         $action->handle($schedule, $request->validated('attendances'));
 
-        return to_route('schedules.show', $schedule)
-            ->with('success', 'Attendance successfully recorded.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Attendance successfully recorded.']);
+
+        return to_route('schedules.show', $schedule);
     }
 }

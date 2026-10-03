@@ -37,7 +37,9 @@ class LearningMaterialController extends Controller
             $request->validated(),
         );
 
-        return back()->with('success', 'Materi pembelajaran berhasil diunggah');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Materi pembelajaran berhasil diunggah']);
+
+        return back();
     }
 
     public function stream(StreamLearningMaterialRequest $request, LearningMaterial $material): StreamedResponse|BinaryFileResponse

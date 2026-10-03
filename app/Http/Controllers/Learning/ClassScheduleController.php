@@ -29,7 +29,9 @@ class ClassScheduleController extends Controller
     {
         ClassSchedule::create($request->validated());
 
-        return to_route('schedules.index')->with('success', 'schedules successfully created.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'schedules successfully created.']);
+
+        return to_route('schedules.index');
     }
 
     public function show(ClassSchedule $schedule): Response
@@ -43,13 +45,17 @@ class ClassScheduleController extends Controller
     {
         $schedule->update($request->validated());
 
-        return to_route('schedules.index')->with('success', 'schedules successfully updated.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'schedules successfully updated.']);
+
+        return to_route('schedules.index');
     }
 
     public function destroy(ClassSchedule $schedule): RedirectResponse
     {
         $schedule->delete();
 
-        return to_route('schedules.index')->with('success', 'schedules successfully deleted.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'schedules successfully deleted.']);
+
+        return to_route('schedules.index');
     }
 }

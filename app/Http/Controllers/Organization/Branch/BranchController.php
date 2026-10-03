@@ -28,7 +28,9 @@ class BranchController extends Controller
     {
         Branch::create($request->validated());
 
-        return to_route('branches.index')->with('success', 'Branch successfully created.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch successfully created.']);
+
+        return to_route('branches.index');
     }
 
     public function show(Branch $branch): Response
@@ -42,13 +44,17 @@ class BranchController extends Controller
     {
         $branch->update($request->validated());
 
-        return to_route('branches.index')->with('success', 'Branch successfully updated.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch successfully updated.']);
+
+        return to_route('branches.index');
     }
 
     public function destroy(Branch $branch): RedirectResponse
     {
         $branch->delete();
 
-        return to_route('branches.index')->with('success', 'Branch successfully deleted.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch successfully deleted.']);
+
+        return to_route('branches.index');
     }
 }
