@@ -32,7 +32,9 @@ class QuestionController extends Controller
     ): RedirectResponse {
         $action->handle($request->validated());
 
-        return back()->with('success', 'Question created successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Question created successfully']);
+
+        return back();
     }
 
     public function show(Question $question): Response
@@ -49,13 +51,17 @@ class QuestionController extends Controller
     ): RedirectResponse {
         $action->handle($question, $request->validated());
 
-        return back()->with('success', 'Question updated successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Question updated successfully']);
+
+        return back();
     }
 
     public function destroy(Question $question): RedirectResponse
     {
         (bool) $question->delete();
 
-        return back()->with('success', 'Question deleted successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Question deleted successfully']);
+
+        return back();
     }
 }

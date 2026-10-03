@@ -32,7 +32,9 @@ class BatchController extends Controller
     {
         Batch::create($request->validated());
 
-        return back()->with('success', 'Batch created successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Batch created successfully']);
+
+        return back();
     }
 
     /**
@@ -53,7 +55,9 @@ class BatchController extends Controller
         // UpdateBatchAction::run($batch, $request->validated());
         $batch->update($request->validated());
 
-        return back()->with('success', 'Batch updated successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Batch updated successfully']);
+
+        return back();
     }
 
     /**
@@ -64,6 +68,8 @@ class BatchController extends Controller
         // DeleteBatchAction::run($batch);
         $batch->delete();
 
-        return back()->with('success', 'Batch deleted successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Batch deleted successfully']);
+
+        return back();
     }
 }

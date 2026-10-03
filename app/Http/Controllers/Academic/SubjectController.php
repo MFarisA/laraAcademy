@@ -32,7 +32,9 @@ class SubjectController extends Controller
     {
         Subject::create($request->validated());
 
-        return back()->with('success', 'Subject created successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Subject created successfully']);
+
+        return back();
     }
 
     /**
@@ -52,7 +54,9 @@ class SubjectController extends Controller
     {
         $subject->update($request->validated());
 
-        return back()->with('success', 'Subject updated successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Subject updated successfully']);
+
+        return back();
     }
 
     /**
@@ -62,6 +66,8 @@ class SubjectController extends Controller
     {
         $subject->delete();
 
-        return back()->with('success', 'Subject deleted successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Subject deleted successfully']);
+
+        return back();
     }
 }

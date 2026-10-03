@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Program\SyncProgramSubjectsRequest;
 use App\Models\Academic\Program;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class ProgramSubjectController extends Controller
 {
@@ -17,6 +18,8 @@ class ProgramSubjectController extends Controller
     ): RedirectResponse {
         $action->handle($programs, $request->validated('subjects', []));
 
-        return back()->with('success', 'Program subjects successfully updated');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Program subjects successfully updated']);
+
+        return back();
     }
 }

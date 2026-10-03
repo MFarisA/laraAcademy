@@ -32,7 +32,9 @@ class ProgramController extends Controller
     {
         Program::create($request->validated());
 
-        return back()->with('success', 'Program created successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Program created successfully']);
+
+        return back();
     }
 
     /**
@@ -52,7 +54,9 @@ class ProgramController extends Controller
     {
         $program->update($request->validated());
 
-        return back()->with('success', 'Program updated successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Program updated successfully']);
+
+        return back();
     }
 
     /**
@@ -62,6 +66,8 @@ class ProgramController extends Controller
     {
         $program->delete();
 
-        return back()->with('success', 'Program deleted successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Program deleted successfully']);
+
+        return back();
     }
 }

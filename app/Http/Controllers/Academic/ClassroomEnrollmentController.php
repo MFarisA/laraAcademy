@@ -11,6 +11,7 @@ use App\Http\Requests\Academic\Enrollment\UpdateEnrollmentRequest;
 use App\Models\Academic\Classroom;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class ClassroomEnrollmentController extends Controller
 {
@@ -25,7 +26,9 @@ class ClassroomEnrollmentController extends Controller
         $student = User::findOrFail($request->validated('student_id'));
         $action->handle($classroom, $student);
 
-        return back()->with('success', 'Siswa berhasil didaftarkan ke kelas');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Siswa berhasil didaftarkan ke kelas']);
+
+        return back();
     }
 
     public function update(
@@ -37,7 +40,9 @@ class ClassroomEnrollmentController extends Controller
         $status = EnrollmentStatusEnum::from($request->validated('status'));
         $action->handle($classroom, $student, $status);
 
-        return back()->with('success', 'Status Pendaftaran Siswa berhasil diperbarui.');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Status Pendaftaran Siswa berhasil diperbarui.']);
+
+        return back();
     }
 
     public function destroy(
@@ -48,6 +53,8 @@ class ClassroomEnrollmentController extends Controller
         // Sesuai aturan: dropout/keluar mengubah status jadi dropped, bukan menghapus baris
         $action->handle($classroom, $student, EnrollmentStatusEnum::DROPPED);
 
-        return back()->with('success', 'Siswa telah dikeluarkan dari kelas');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Siswa telah dikeluarkan dari kelas']);
+
+        return back();
     }
 }

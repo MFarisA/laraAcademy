@@ -32,7 +32,9 @@ class ClassroomController extends Controller
     {
         Classroom::create($request->validated());
 
-        return back()->with('success', 'Classroom created successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Classroom created successfully']);
+
+        return back();
     }
 
     /**
@@ -52,7 +54,9 @@ class ClassroomController extends Controller
     {
         $classroom->update($request->validated());
 
-        return back()->with('success', 'Classroom updated successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Classroom updated successfully']);
+
+        return back();
     }
 
     /**
@@ -62,6 +66,8 @@ class ClassroomController extends Controller
     {
         $classroom->delete();
 
-        return back()->with('success', 'Classroom deleted successfully');
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Classroom deleted successfully']);
+
+        return back();
     }
 }
