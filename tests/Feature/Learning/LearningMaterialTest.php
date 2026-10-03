@@ -86,7 +86,9 @@ test('instructor can upload learning material and file is stored in local storag
         'file' => $file,
     ]);
 
-    $response->assertSessionHas('success');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Materi pembelajaran berhasil diunggah'],
+    ]);
 
     $this->assertDatabaseHas('learning_materials', [
         'title' => 'Modul 01: Pancasila dan UUD 1945',

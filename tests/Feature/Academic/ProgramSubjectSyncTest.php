@@ -28,7 +28,9 @@ test('super admin can sync subjects to a program with min passing scores', funct
     ]);
 
     $response->assertRedirect();
-    $response->assertSessionHas('success');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Program subjects successfully updated'],
+    ]);
 
     $this->assertDatabaseHas('program_subjects', [
         'program_id' => $program->id,

@@ -32,7 +32,7 @@ class RolePermissionSeeder extends Seeder
         $now = now();
 
         // 2. Insert semua permission dari Enum Registry secara massal (idempotent)
-        $permissions = array_map(fn (string $name) => [
+        $permissions = array_map(fn(string $name) => [
             'name' => $name,
             'guard_name' => $guard,
             'created_at' => $now,
@@ -108,10 +108,10 @@ class RolePermissionSeeder extends Seeder
 
         // 4. Akun bootstrap Super Admin
         User::firstOrCreate(
-            ['email' => 'superadmin@laraacademy.test'],
+            ['email' => 'a@x.com'],
             [
                 'name' => 'Super Administrator',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('x'),
                 'email_verified_at' => $now,
             ]
         )->syncRoles([RoleRegistryEnum::SUPERADMIN->value]);

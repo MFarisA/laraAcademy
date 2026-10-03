@@ -48,7 +48,9 @@ test('super admin can enroll a student into classroom', function () {
     ]);
 
     $response->assertRedirect();
-    $response->assertSessionHas('success');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Siswa berhasil didaftarkan ke kelas'],
+    ]);
 
     $this->assertDatabaseHas('classroom_enrollments', [
         'classroom_id' => $classroom->id,
@@ -121,7 +123,9 @@ test('super admin can update enrollment status', function () {
     ]);
 
     $response->assertRedirect();
-    $response->assertSessionHas('success');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Status Pendaftaran Siswa berhasil diperbarui.'],
+    ]);
 
     $this->assertDatabaseHas('classroom_enrollments', [
         'classroom_id' => $classroom->id,
@@ -145,7 +149,9 @@ test('destroying enrollment marks status as dropped instead of deleting row', fu
     $response = $this->actingAs($superAdmin)->delete(route('classrooms.enrollments.destroy', [$classroom, $student]));
 
     $response->assertRedirect();
-    $response->assertSessionHas('success');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Siswa telah dikeluarkan dari kelas'],
+    ]);
 
     // Data tetap ada di database, tapi statusnya DROPPED
     $this->assertDatabaseHas('classroom_enrollments', [

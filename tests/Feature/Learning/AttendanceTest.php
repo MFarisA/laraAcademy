@@ -78,7 +78,9 @@ test('super admin or instructor can record bulk attendance for a schedule', func
     ]);
 
     $response->assertRedirect(route('schedules.show', $env['schedule']));
-    $response->assertSessionHas('success');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Attendance successfully recorded.'],
+    ]);
 
     $this->assertDatabaseHas('attendances', [
         'class_schedule_id' => $env['schedule']->id,

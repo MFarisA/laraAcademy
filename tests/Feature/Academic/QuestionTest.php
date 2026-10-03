@@ -77,7 +77,9 @@ test('super admin can create standard question with valid options', function () 
     $response = $this->actingAs($this->superAdmin)
         ->post(route('questions.store'), $payload);
 
-    $response->assertSessionHas('success', 'Question created successfully');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Question created successfully'],
+    ]);
 
     $this->assertDatabaseHas('questions', [
         'subject_id' => $this->subject->id,
@@ -152,7 +154,9 @@ test('super admin can create tkp question where all options have weights 1 to 5'
     $response = $this->actingAs($this->superAdmin)
         ->post(route('questions.store'), $payload);
 
-    $response->assertSessionHas('success', 'Question created successfully');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Question created successfully'],
+    ]);
 
     $question = Question::where('question_text', $payload['question_text'])->first();
     expect($question)->not->toBeNull();
@@ -230,7 +234,9 @@ test('super admin can update question and replace its options', function () {
     $response = $this->actingAs($this->superAdmin)
         ->put(route('questions.update', $question), $updatePayload);
 
-    $response->assertSessionHas('success', 'Question updated successfully');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Question updated successfully'],
+    ]);
 
     $question->refresh();
     expect($question->question_text)->toBe('Teks baru yang sudah diedit');
@@ -252,7 +258,9 @@ test('super admin can soft delete a question', function () {
     $response = $this->actingAs($this->superAdmin)
         ->delete(route('questions.destroy', $question));
 
-    $response->assertSessionHas('success', 'Question deleted successfully');
+    $response->assertSessionHas('inertia.flash_data', [
+        'toast' => ['type' => 'success', 'message' => 'Question deleted successfully'],
+    ]);
 
     // Pastikan terhapus secara soft delete (masih ada di withTrashed)
     $this->assertSoftDeleted('questions', [
