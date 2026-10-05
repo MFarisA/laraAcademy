@@ -21,25 +21,26 @@ class QuestionController extends Controller
     public function index(FilterQuestionRequest $request): Response
     {
         $validated = $request->validated();
-        $question = Question::query()
+        $questions = Question::query()
             ->with(['subject', 'options'])
             ->filter($validated)
-            ->paginate($request->integer('per_page', 15))
+            ->paginate($perPage = $request->integer('per_page', 15))
             ->withQueryString();
 
-        $subject = Subject::query()
+        $subjects = Subject::query()
             ->select(['id', 'name', 'code'])
             ->orderBy('name')
             ->get();
 
         return Inertia::render('Academic/Assessment/Index', [
-            'questions' => QuestionResource::collection($question),
-            'subject' => SubjectResource::collection($subject),
-            'filter' => [
+            'questions' => QuestionResource::collection($questions),
+            'subjects' => SubjectResource::collection($subjects),
+            'filters' => [
                 'search' => $validated['search'] ?? null,
                 'subject_id' => $validated['subject_id'] ?? null,
                 'difficulty_level' => $validated['difficulty_level'] ?? null,
                 'grading_rule' => $validated['grading_rule'] ?? null,
+                'per_page' => $perPage,
             ],
         ]);
     }

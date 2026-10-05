@@ -45,8 +45,8 @@ class Question extends Model
     }
 
     /**
-     * @param  Builder<Question>  $query
-     * @return Builder<Question>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeSearchText(Builder $query, string $term): Builder
     {
@@ -69,16 +69,16 @@ class Question extends Model
     {
         $query->when(
             filled($filter['search'] ?? null),
-            fn(Builder $builder) => $this->scopeSearchText($builder, (string) $filter['search']),
-            fn(Builder $builder) => $builder->latest('id'),
+            fn (Builder $builder) => $this->scopeSearchText($builder, (string) $filter['search']),
+            fn (Builder $builder) => $builder->latest('id'),
         );
         $query->when(
             filled($filter['subject_id'] ?? null),
-            fn(Builder $builder) => $builder->where('subject_id', $filter['subject_id']),
+            fn (Builder $builder) => $builder->where('subject_id', $filter['subject_id']),
         );
         $query->when(
             filled($filter['difficulty_level'] ?? null),
-            fn(Builder $builder) => $builder->where(
+            fn (Builder $builder) => $builder->where(
                 'difficulty_level',
                 $filter['difficulty_level'] instanceof DifficultyLevelEnum
                     ? $filter['difficulty_level']->value
@@ -87,7 +87,7 @@ class Question extends Model
         );
         $query->when(
             filled($filter['grading_rule'] ?? null),
-            fn(Builder $builder) => $builder->where(
+            fn (Builder $builder) => $builder->where(
                 'grading_rule',
                 $filter['grading_rule'] instanceof GradingRuleEnum
                     ? $filter['grading_rule']->value
