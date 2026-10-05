@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Academic\Question;
+namespace App\Http\Requests\Assessment\Question;
 
 use App\Enum\Assessment\DifficultyLevelEnum;
 use App\Enum\Assessment\GradingRuleEnum;

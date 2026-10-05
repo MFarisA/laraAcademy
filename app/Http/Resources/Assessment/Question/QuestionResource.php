@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Academic\Question;
+namespace App\Http\Resources\Assessment\Question;
 
 use App\Http\Resources\Academic\Subject\SubjectResource;
 use App\Models\Assessment\Question\Question;

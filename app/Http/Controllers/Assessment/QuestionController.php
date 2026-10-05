@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Academic;
+namespace App\Http\Controllers\Assessment;
 
 use App\Actions\Assessment\Question\StoreQuestionsAction;
 use App\Actions\Assessment\Question\UpdateQuestionAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Academic\Question\FilterQuestionRequest;
-use App\Http\Requests\Academic\Question\StoreQuestionRequest;
-use App\Http\Requests\Academic\Question\UpdateQuestionRequest;
-use App\Http\Resources\Academic\Question\QuestionResource;
+use App\Http\Requests\Assessment\Question\FilterQuestionRequest;
+use App\Http\Requests\Assessment\Question\StoreQuestionRequest;
+use App\Http\Requests\Assessment\Question\UpdateQuestionRequest;
 use App\Http\Resources\Academic\Subject\SubjectResource;
+use App\Http\Resources\Assessment\Question\QuestionResource;
 use App\Models\Academic\Subject;
 use App\Models\Assessment\Question\Question;
 use Illuminate\Http\RedirectResponse;
