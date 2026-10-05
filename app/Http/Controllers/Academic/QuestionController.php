@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Academic;
 use App\Actions\Assessment\Question\StoreQuestionsAction;
 use App\Actions\Assessment\Question\UpdateQuestionAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Academic\Question\FilterQuestionRequest;
 use App\Http\Requests\Academic\Question\StoreQuestionRequest;
 use App\Http\Requests\Academic\Question\UpdateQuestionRequest;
 use App\Http\Resources\Academic\Question\QuestionResource;
+use App\Http\Resources\Academic\Subject\SubjectResource;
+use App\Models\Academic\Subject;
 use App\Models\Assessment\Question\Question;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -15,14 +18,29 @@ use Inertia\Response;
 
 class QuestionController extends Controller
 {
-    public function index(): Response
+    public function index(FilterQuestionRequest $request): Response
     {
-        $questions = Question::query()
+        $validated = $request->validated();
+        $question = Question::query()
             ->with(['subject', 'options'])
-            ->paginate(15);
+            ->filter($validated)
+            ->paginate($request->integer('per_page', 15))
+            ->withQueryString();
+
+        $subject = Subject::query()
+            ->select(['id', 'name', 'code'])
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Academic/Assessment/Index', [
-            'questions' => QuestionResource::collection($questions),
+            'questions' => QuestionResource::collection($question),
+            'subject' => SubjectResource::collection($subject),
+            'filter' => [
+                'search' => $validated['search'] ?? null,
+                'subject_id' => $validated['subject_id'] ?? null,
+                'difficulty_level' => $validated['difficulty_level'] ?? null,
+                'grading_rule' => $validated['grading_rule'] ?? null,
+            ],
         ]);
     }
 
