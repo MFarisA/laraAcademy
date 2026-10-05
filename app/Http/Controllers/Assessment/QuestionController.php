@@ -56,6 +56,15 @@ class QuestionController extends Controller
         return back();
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Academic/Assessment/Create', [
+            'subjects' => SubjectResource::collection(
+                Subject::query()->select(['id', 'name', 'code'])->orderBy('name')->get()
+            ),
+        ]);
+    }
+
     public function show(Question $question): Response
     {
         return Inertia::render('Academic/Assessment/Show', [
@@ -73,6 +82,16 @@ class QuestionController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Question updated successfully']);
 
         return back();
+    }
+
+    public function edit(Question $question): Response
+    {
+        return Inertia::render('Academic/Assessment/Edit', [
+            'question' => new QuestionResource($question->load(['subject', 'options'])),
+            'subjects' => SubjectResource::collection(
+                Subject::query()->select(['id', 'name', 'code'])->orderBy('name')->get()
+            ),
+        ]);
     }
 
     public function destroy(Question $question): RedirectResponse

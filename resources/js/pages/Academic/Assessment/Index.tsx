@@ -1,6 +1,11 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
 import Heading from '@/components/heading';
+import {
+    DifficultyBadge,
+    GradingRuleBadge,
+} from '@/components/question-badges';
+import QuestionFilterBar from '@/components/question-filter-bar';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -29,7 +34,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { destroy, index, show } from '@/routes/questions';
+import { create, destroy, edit, index, show } from '@/routes/questions';
 
 type Subject = {
     id: number;
@@ -69,56 +74,35 @@ type PageProps = {
         data: Question[];
         meta: PaginationMeta;
     };
+    subjects: {
+        data: Subject[];
+    };
+    filters: {
+        search: string | null;
+        subject_id: string | null;
+        difficulty_level: string | null;
+        grading_rule: string | null;
+        per_page: number;
+    };
 };
 
-const GRADING_RULE_LABEL: Record<
-    Question['grading_rule'],
-    {
-        label: string;
-        className: string;
-    }
-> = {
-    STANDARD: {
-        label: 'Standard',
-        className:
-            'border-blue-500/30 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800',
-    },
-    TKP: {
-        label: 'TKP',
-        className:
-            'border-purple-500/30 bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-800',
-    },
-};
-
-const DIFFICULTY_CONFIG: Record<
-    string,
-    {
-        label: string;
-        className: string;
-    }
-> = {
-    easy: {
-        label: 'Mudah',
-        className:
-            'border-emerald-500/30 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800',
-    },
-    medium: {
-        label: 'Sedang',
-        className:
-            'border-amber-500/30 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800',
-    },
-    hard: {
-        label: 'Sulit',
-        className:
-            'border-rose-500/30 bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800',
-    },
-};
-
-export default function Index({ questions }: PageProps) {
+export default function Index({ questions, subjects, filters }: PageProps) {
     const { data, meta } = questions;
 
+    const hasActiveFilter =
+        filters.search !== null ||
+        filters.subject_id !== null ||
+        filters.difficulty_level !== null ||
+        filters.grading_rule !== null;
+
+    /**
+     * `mergeQuery` dipakai supaya filter lain tetap ada di URL. Kalau pakai
+     * `query`, seluruh query string lama hilang setiap kali pindah halaman.
+     */
     const goToPage = (page: number) => {
-        router.get(index.url({ query: { page } }), { preserveScroll: true });
+        router.get(index.url({ mergeQuery: { page } }), {
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -128,10 +112,20 @@ export default function Index({ questions }: PageProps) {
             <h1 className="sr-only">Bank Soal</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Bank Soal"
-                    description="Kelola soal-soal yang dipakai untuk ujian dan penilaian."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Bank Soal"
+                        description="Kelola soal-soal yang dipakai untuk ujian dan penilaian."
+                    />
+                    <Button asChild className="self-start">
+                        <Link href={create.url()}>
+                            <Plus />
+                            Tambah Soal
+                        </Link>
+                    </Button>
+                </div>
+
+                <QuestionFilterBar subjects={subjects.data} filters={filters} />
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -157,23 +151,18 @@ export default function Index({ questions }: PageProps) {
                                         colSpan={6}
                                         className="h-32 text-center text-muted-foreground"
                                     >
-                                        Belum ada soal. Mulai tambahkan soal
-                                        pertamamu.
+                                        {hasActiveFilter
+                                            ? 'Tidak ada soal yang cocok dengan filter ini. Coba ubah kata kunci atau tekan Reset.'
+                                            : 'Belum ada soal. Mulai tambahkan soal pertamamu.'}
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 data.map((question, position) => {
-                                    const gradingRule =
-                                        GRADING_RULE_LABEL[
-                                            question.grading_rule
-                                        ];
-                                    const difficulty =
-                                        DIFFICULTY_CONFIG[
-                                            question.difficulty_level
-                                        ];
-
                                     return (
-                                        <TableRow key={question.id}>
+                                        <TableRow
+                                            key={question.id}
+                                            className="hover:bg-muted/40"
+                                        >
                                             <TableCell className="text-muted-foreground">
                                                 {(meta.from ?? 1) + position}
                                             </TableCell>
@@ -186,35 +175,28 @@ export default function Index({ questions }: PageProps) {
                                             </TableCell>
 
                                             <TableCell>
-                                                <p className="line-clamp-2 max-w-xl">
+                                                <Link
+                                                    href={show.url(question.id)}
+                                                    className="line-clamp-2 block max-w-xl transition-colors hover:text-primary hover:underline"
+                                                >
                                                     {question.question_text}
-                                                </p>
+                                                </Link>
                                             </TableCell>
 
                                             <TableCell>
-                                                <Badge
-                                                    variant="outline"
-                                                    className={
-                                                        gradingRule?.className ??
-                                                        'text-muted-foreground'
+                                                <GradingRuleBadge
+                                                    gradingRule={
+                                                        question.grading_rule
                                                     }
-                                                >
-                                                    {gradingRule?.label ??
-                                                        question.grading_rule}
-                                                </Badge>
+                                                />
                                             </TableCell>
 
                                             <TableCell>
-                                                <Badge
-                                                    variant="outline"
-                                                    className={
-                                                        difficulty?.className ??
-                                                        'text-muted-foreground'
+                                                <DifficultyBadge
+                                                    difficultyLevel={
+                                                        question.difficulty_level
                                                     }
-                                                >
-                                                    {difficulty?.label ??
-                                                        question.difficulty_level}
-                                                </Badge>
+                                                />
                                             </TableCell>
 
                                             <TableCell className="text-right">
@@ -235,11 +217,11 @@ export default function Index({ questions }: PageProps) {
                                                             asChild
                                                         >
                                                             <Link
-                                                                href={show.url(
+                                                                href={edit.url(
                                                                     question.id,
                                                                 )}
                                                             >
-                                                                Lihat
+                                                                Edit
                                                             </Link>
                                                         </DropdownMenuItem>
                                                         <DropdownMenuSeparator />

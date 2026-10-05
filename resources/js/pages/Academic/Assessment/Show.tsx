@@ -2,6 +2,10 @@ import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft, Award, CheckCircle2 } from 'lucide-react';
 
 import Heading from '@/components/heading';
+import {
+    DifficultyBadge,
+    GradingRuleBadge,
+} from '@/components/question-badges';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,52 +43,7 @@ type PageProps = {
     };
 };
 
-const GRADING_RULE_CONFIG: Record<
-    Question['grading_rule'],
-    {
-        label: string;
-        className: string;
-    }
-> = {
-    STANDARD: {
-        label: 'Standard',
-        className:
-            'border-blue-500/30 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800',
-    },
-    TKP: {
-        label: 'TKP',
-        className:
-            'border-purple-500/30 bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-800',
-    },
-};
-
-const DIFFICULTY_CONFIG: Record<
-    string,
-    {
-        label: string;
-        className: string;
-    }
-> = {
-    easy: {
-        label: 'Mudah',
-        className:
-            'border-emerald-500/30 bg-emerald-50 text-emerald-700 dark:border-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800',
-    },
-    medium: {
-        label: 'Sedang',
-        className:
-            'border-amber-500/30 bg-amber-50 text-amber-700 dark:border-amber-950/40 dark:text-amber-400 dark:border-amber-800',
-    },
-    hard: {
-        label: 'Sulit',
-        className:
-            'border-rose-500/30 bg-rose-50 text-rose-700 dark:border-rose-950/40 dark:text-rose-400 dark:border-rose-800',
-    },
-};
-
 export default function Show({ question: { data: question } }: PageProps) {
-    const gradingRule = GRADING_RULE_CONFIG[question.grading_rule];
-    const difficulty = DIFFICULTY_CONFIG[question.difficulty_level];
     const isTkp = question.grading_rule === 'TKP';
 
     return (
@@ -93,7 +52,7 @@ export default function Show({ question: { data: question } }: PageProps) {
 
             <h1 className="sr-only">Detail Soal</h1>
 
-            <div className="space-y-6">
+            <div className="space-y-6 px-6 py-6">
                 {/* Header & Back Button */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading
@@ -235,16 +194,9 @@ export default function Show({ question: { data: question } }: PageProps) {
                                         Aturan Penilaian
                                     </span>
                                     <div className="mt-1">
-                                        <Badge
-                                            variant="outline"
-                                            className={
-                                                gradingRule?.className ??
-                                                'text-muted-foreground'
-                                            }
-                                        >
-                                            {gradingRule?.label ??
-                                                question.grading_rule}
-                                        </Badge>
+                                        <GradingRuleBadge
+                                            gradingRule={question.grading_rule}
+                                        />
                                     </div>
                                     <p className="mt-1.5 text-xs text-muted-foreground">
                                         {isTkp
@@ -260,16 +212,11 @@ export default function Show({ question: { data: question } }: PageProps) {
                                         Tingkat Kesulitan
                                     </span>
                                     <div className="mt-1">
-                                        <Badge
-                                            variant="outline"
-                                            className={
-                                                difficulty?.className ??
-                                                'text-muted-foreground'
+                                        <DifficultyBadge
+                                            difficultyLevel={
+                                                question.difficulty_level
                                             }
-                                        >
-                                            {difficulty?.label ??
-                                                question.difficulty_level}
-                                        </Badge>
+                                        />
                                     </div>
                                 </div>
                             </CardContent>
