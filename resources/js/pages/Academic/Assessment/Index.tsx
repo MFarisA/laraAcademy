@@ -1,7 +1,26 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { MoreVertical } from 'lucide-react';
 import Heading from '@/components/heading';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     Table,
     TableBody,
@@ -10,7 +29,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { index, show } from '@/routes/questions';
+import { destroy, index, show } from '@/routes/questions';
 
 type Subject = {
     id: number;
@@ -108,7 +127,7 @@ export default function Index({ questions }: PageProps) {
 
             <h1 className="sr-only">Bank Soal</h1>
 
-            <div className="space-y-6">
+            <div className="space-y-6 px-6 py-6">
                 <Heading
                     title="Bank Soal"
                     description="Kelola soal-soal yang dipakai untuk ujian dan penilaian."
@@ -199,19 +218,84 @@ export default function Index({ questions }: PageProps) {
                                             </TableCell>
 
                                             <TableCell className="text-right">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <Link
-                                                        href={show.url(
-                                                            question.id,
-                                                        )}
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        asChild
                                                     >
-                                                        Lihat
-                                                    </Link>
-                                                </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon-sm"
+                                                            aria-label="Aksi soal"
+                                                        >
+                                                            <MoreVertical />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={show.url(
+                                                                    question.id,
+                                                                )}
+                                                            >
+                                                                Lihat
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger
+                                                                asChild
+                                                            >
+                                                                <DropdownMenuItem
+                                                                    variant="destructive"
+                                                                    onSelect={(
+                                                                        event,
+                                                                    ) =>
+                                                                        event.preventDefault()
+                                                                    }
+                                                                >
+                                                                    Hapus
+                                                                </DropdownMenuItem>
+                                                            </AlertDialogTrigger>
+                                                            <AlertDialogContent>
+                                                                <AlertDialogHeader>
+                                                                    <AlertDialogTitle>
+                                                                        Hapus
+                                                                        soal
+                                                                        ini?
+                                                                    </AlertDialogTitle>
+                                                                    <AlertDialogDescription>
+                                                                        Tindakan
+                                                                        ini
+                                                                        tidak
+                                                                        bisa
+                                                                        dibatalkan.
+                                                                    </AlertDialogDescription>
+                                                                </AlertDialogHeader>
+                                                                <AlertDialogFooter>
+                                                                    <AlertDialogCancel>
+                                                                        Batal
+                                                                    </AlertDialogCancel>
+                                                                    <AlertDialogAction
+                                                                        variant="destructive"
+                                                                        asChild
+                                                                    >
+                                                                        <Link
+                                                                            href={destroy.url(
+                                                                                question.id,
+                                                                            )}
+                                                                            method="delete"
+                                                                            as="button"
+                                                                        >
+                                                                            Hapus
+                                                                        </Link>
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     );
