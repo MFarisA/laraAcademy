@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\Assessment\DifficultyLevelEnum;
 use App\Enum\Assessment\GradingRuleEnum;
 use App\Models\Academic\Subject;
 use App\Models\Assessment\Question\Question;
@@ -240,7 +241,7 @@ test('super admin can update question and replace its options', function () {
 
     $question->refresh();
     expect($question->question_text)->toBe('Teks baru yang sudah diedit');
-    expect($question->difficulty_level)->toBe('medium');
+    expect($question->difficulty_level)->toBe(DifficultyLevelEnum::MEDIUM);
     expect($question->options)->toHaveCount(2);
 
     $newCorrect = $question->options->where('is_correct', true)->first();

@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Assessment\Question;
 
+use App\Enum\Assessment\DifficultyLevelEnum;
 use App\Enum\Assessment\GradingRuleEnum;
 use App\Models\Academic\Subject;
 use App\Models\Assessment\Question\Question;
@@ -21,9 +22,11 @@ class QuestionFactory extends Factory
     {
         return [
             'subject_id' => Subject::factory(),
+            // Teks acak disengaja: test tidak bergantung pada isi soal, sedangkan
+            // data yang tampil di UI memakai teks Indonesia dari QuestionBank.
             'question_text' => fake()->sentence(12),
             'grading_rule' => GradingRuleEnum::STANDARD,
-            'difficulty_level' => 'medium',
+            'difficulty_level' => DifficultyLevelEnum::MEDIUM,
         ];
     }
 
@@ -34,7 +37,7 @@ class QuestionFactory extends Factory
         ]);
     }
 
-    public function difficulty(string $level): static
+    public function difficulty(DifficultyLevelEnum $level): static
     {
         return $this->state(fn (): array => [
             'difficulty_level' => $level,

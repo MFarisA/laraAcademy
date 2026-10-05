@@ -32,7 +32,7 @@ class RolePermissionSeeder extends Seeder
         $now = now();
 
         // 2. Insert semua permission dari Enum Registry secara massal (idempotent)
-        $permissions = array_map(fn(string $name) => [
+        $permissions = array_map(fn (string $name) => [
             'name' => $name,
             'guard_name' => $guard,
             'created_at' => $now,
