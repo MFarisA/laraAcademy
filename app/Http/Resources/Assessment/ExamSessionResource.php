@@ -12,7 +12,6 @@ class ExamSessionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // TODO: Transformasi data sesi ujian untuk admin
-        return parent::toArray($request);
+        return [];
     }
 }

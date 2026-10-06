@@ -12,7 +12,6 @@ class ExamTemplateResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // TODO: Transformasi data template ujian untuk admin
-        return parent::toArray($request);
+        return [];
     }
 }

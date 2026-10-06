@@ -12,7 +12,6 @@ class CbtExamSheetResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // TODO: Transformasi data soal ujian siswa tanpa membocorkan is_correct & weight_score
-        return parent::toArray($request);
+        return [];
     }
 }
