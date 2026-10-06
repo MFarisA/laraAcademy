@@ -51,9 +51,12 @@ class QuestionController extends Controller
     ): RedirectResponse {
         $action->handle($request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Question created successfully']);
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Question created successfully',
+        ]);
 
-        return back();
+        return to_route('questions.index');
     }
 
     public function create(): Response
@@ -79,9 +82,12 @@ class QuestionController extends Controller
     ): RedirectResponse {
         $action->handle($question, $request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Question updated successfully']);
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Question updated successfully',
+        ]);
 
-        return back();
+        return to_route('questions.index');
     }
 
     public function edit(Question $question): Response

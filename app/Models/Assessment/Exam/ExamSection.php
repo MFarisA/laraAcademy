@@ -29,7 +29,7 @@ class ExamSection extends Model
      */
     public function template(): BelongsTo
     {
-        return $this->belongsTo(ExamTemplate::class);
+        return $this->belongsTo(ExamTemplate::class, 'exam_template_id');
     }
 
     /**
@@ -41,7 +41,7 @@ class ExamSection extends Model
     }
 
     /**
-     * @return BelongsToMany<Question, $this, ExamSectionQuestion>
+     * @return BelongsToMany<Question, $this, ExamSectionQuestion>\
      */
     public function questions(): BelongsToMany
     {

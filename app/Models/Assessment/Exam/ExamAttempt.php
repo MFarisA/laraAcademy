@@ -28,7 +28,7 @@ class ExamAttempt extends Model
     use HasFactory;
 
     #[Override]
-    public function casts()
+    public function casts(): array
     {
         return [
             'started_at' => 'datetime',
@@ -60,5 +60,13 @@ class ExamAttempt extends Model
     public function answers(): HasMany
     {
         return $this->hasMany(ExamAnswer::class);
+    }
+
+    /**
+     * @return HasMany<ExamSectionResult, $this>
+     */
+    public function sectionResults(): HasMany
+    {
+        return $this->hasMany(ExamSectionResult::class, 'exam_attempt_id');
     }
 }

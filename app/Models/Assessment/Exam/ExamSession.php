@@ -37,7 +37,7 @@ class ExamSession extends Model
      */
     public function template(): BelongsTo
     {
-        return $this->belongsTo(ExamTemplate::class);
+        return $this->belongsTo(ExamTemplate::class, 'exam_template_id');
     }
 
     /**
@@ -45,7 +45,7 @@ class ExamSession extends Model
      */
     public function classroom(): BelongsTo
     {
-        return $this->belongsTo(Classroom::class);
+        return $this->belongsTo(Classroom::class, 'classroom_id');
     }
 
     /**

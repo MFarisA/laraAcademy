@@ -8,6 +8,9 @@ use App\Http\Controllers\Academic\ProgramController;
 use App\Http\Controllers\Academic\ProgramSubjectController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Account\User\UserController;
+use App\Http\Controllers\Assessment\CbtController;
+use App\Http\Controllers\Assessment\ExamSessionController;
+use App\Http\Controllers\Assessment\ExamTemplateController;
 use App\Http\Controllers\Assessment\QuestionController;
 use App\Http\Controllers\Learning\AttendanceController;
 use App\Http\Controllers\Learning\ClassScheduleController;
@@ -43,19 +46,28 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
     Route::resource('schedules', ClassScheduleController::class);
     Route::resource('questions', QuestionController::class);
 
+    // Exam Management (Authoring & Sessions)
+    Route::resource('exam-templates', ExamTemplateController::class);
+    Route::resource('exam-sessions', ExamSessionController::class);
+    Route::post('exam-sessions/{exam_session}/regenerate-token', [ExamSessionController::class, 'regenerateToken'])
+        ->name('exam-sessions.regenerate-token');
+
     Route::put('programs/{programs}/subjects', [ProgramSubjectController::class, 'update'])->name('programs.subjects.update');
 
-    Route::post('classrooms/{classroom}/enrollments', [ClassroomEnrollmentController::class, 'store'])
-        ->name('classrooms.enrollments.store');
-    Route::patch('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'update'])
-        ->name('classrooms.enrollments.update');
-    Route::delete('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'destroy'])
-        ->name('classrooms.enrollments.destroy');
+    Route::post('classrooms/{classroom}/enrollments', [ClassroomEnrollmentController::class, 'store'])->name('classrooms.enrollments.store');
+    Route::patch('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'update'])->name('classrooms.enrollments.update');
+    Route::delete('classrooms/{classroom}/enrollments/{student}', [ClassroomEnrollmentController::class, 'destroy'])->name('classrooms.enrollments.destroy');
 
-    Route::get('classrooms/{classroom}/attendance-summary', [AttendanceController::class, 'attendanceSummary'])
-        ->name('classrooms.attendance.summary');
-    Route::post('schedules/{schedule}/attendances', [AttendanceController::class, 'recordAttendance'])
-        ->name('schedules.attendances.record');
+    Route::get('classrooms/{classroom}/attendance-summary', [AttendanceController::class, 'attendanceSummary'])->name('classrooms.attendance.summary');
+    Route::post('schedules/{schedule}/attendances', [AttendanceController::class, 'recordAttendance'])->name('schedules.attendances.record');
+});
+
+// Student CBT Portal
+Route::middleware(['auth', 'verified', 'role:student|super-admin'])->prefix('cbt')->name('cbt.')->group(function () {
+    Route::post('sessions/{exam_session}/enter', [CbtController::class, 'enter'])->name('sessions.enter');
+    Route::match(['get', 'post'], 'sessions/{exam_session}/start', [CbtController::class, 'start'])->name('sessions.start');
+    Route::put('attempts/{attempt}/answers', [CbtController::class, 'saveAnswer'])->name('attempts.answers.save');
+    Route::post('attempts/{attempt}/submit', [CbtController::class, 'submit'])->name('attempts.submit');
 });
 
 Route::middleware(['auth', 'verified', 'permission:'.UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
