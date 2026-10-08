@@ -105,7 +105,7 @@ test('super admin can update an exam template', function () {
         ->put(route('exam-templates.update', $template), $payload);
 
     $response->assertSessionHas('inertia.flash_data', [
-        'toast' => ['type' => 'success', 'message' => 'Template ujian berhasil dibuat.'],
+        'toast' => ['type' => 'success', 'message' => 'Template ujian berhasil diupdate.'],
     ]);
 
     $this->assertDatabaseHas('exam_templates', [
@@ -127,7 +127,7 @@ test('super admin can delete an exam template', function () {
         ->delete(route('exam-templates.destroy', $template));
 
     $response->assertSessionHas('inertia.flash_data', [
-        'toast' => ['type' => 'success', 'message' => 'Template ujian berhasil dibuat.'],
+        'toast' => ['type' => 'success', 'message' => 'Template ujian berhasil dihapus.'],
     ]);
 
     $this->assertDatabaseMissing('exam_templates', [
