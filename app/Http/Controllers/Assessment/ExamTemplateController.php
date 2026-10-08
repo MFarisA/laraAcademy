@@ -41,7 +41,9 @@ class ExamTemplateController extends Controller
     public function show(ExamTemplate $examTemplate): Response
     {
         return Inertia::render('Assessment/ExamTemplate/Show', [
-            'template' => $examTemplate->load(['program', 'sections.subject']),
+            'template' => ExamTemplateResource::make(
+                $examTemplate->load(['program', 'sections.subject'])
+            ),
         ]);
     }
 
@@ -53,7 +55,7 @@ class ExamTemplateController extends Controller
         $action->handle($request->validated(), $examTemplate);
         Inertia::flash('toast', [
             'type' => 'success',
-            'message' => 'Template ujian berhasil dibuat.',
+            'message' => 'Template ujian berhasil diupdate.',
         ]);
 
         return back();
@@ -64,7 +66,7 @@ class ExamTemplateController extends Controller
         $examTemplate->delete();
         Inertia::flash('toast', [
             'type' => 'success',
-            'message' => 'Template ujian berhasil dibuat.',
+            'message' => 'Template ujian berhasil dihapus.',
         ]);
 
         return back();

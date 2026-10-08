@@ -17,7 +17,12 @@ class SaveExamSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // TODO: Tentukan aturan validasi sesi ujian (template_id, jadwal start & end, token)
+            'exam_template_id' => ['required', 'integer', 'exists:exam_templates,id'],
+            'classroom_id' => ['nullable', 'integer', 'exists:classrooms,id'],
+            'title' => ['required', 'string', 'max:50'],
+            'token' => ['nullable', 'string', 'max:10'],
+            'start_time' => ['required', 'date'],
+            'end_time' => ['required', 'date', 'after:start_time'],
         ];
     }
 }

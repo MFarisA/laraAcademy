@@ -2,49 +2,91 @@
 
 namespace App\Http\Controllers\Assessment;
 
+use App\Actions\Assessment\Exam\SaveExamSessionAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Assessment\Exam\SaveExamSessionRequest;
+use App\Http\Resources\Assessment\ExamSessionResource;
+use App\Models\Academic\Classroom;
 use App\Models\Assessment\Exam\ExamSession;
+use App\Models\Assessment\Exam\ExamTemplate;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ExamSessionController extends Controller
 {
-    public function index(Request $request)
+    public function index(): Response
     {
-        // TODO: Tampilkan daftar sesi ujian
+        $examSession = ExamSession::query()
+            ->with(['template', 'classroom'])
+            ->withCount('attempts')
+            ->latest('id')
+            ->paginate(15);
+        return Inertia::render('Assessment/ExamSession/Index', [
+            'sessions' => ExamSessionResource::collection($examSession),
+            'templates' => ExamTemplate::select(['id', 'title'])->get(),
+            'classrooms' => Classroom::select(['id', 'name'])->get(),
+        ]);
     }
 
-    public function create()
-    {
-        // TODO: Tampilkan form pembuatan sesi ujian
+    public function store(
+        SaveExamSessionRequest $request,
+        SaveExamSessionAction $action
+    ): RedirectResponse {
+        $action->handle($request->validated());
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Sesi ujian berhasil dibuat.'
+        ]);
+
+        return back();
     }
 
-    public function store(Request $request)
+    public function show(ExamSession $examSession): Response
     {
-        // TODO: Simpan sesi ujian baru dan generate token
+        return Inertia::render('Assessment/ExamSession/Show', [
+            'session' => ExamSessionResource::make(
+                $examSession->load(['template.sections', 'classroom'])->loadCount('attempts')
+            ),
+        ]);
     }
 
-    public function show(ExamSession $examSession)
-    {
-        // TODO: Tampilkan detail sesi ujian
+    public function update(
+        SaveExamSessionRequest $request,
+        ExamSession $examSession,
+        SaveExamSessionAction $action
+    ): RedirectResponse {
+        $action->handle($request->validated(), $examSession);
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Sesi ujian berhasil diperbarui.',
+        ]);
+
+        return back();
     }
 
-    public function edit(ExamSession $examSession)
+    public function destroy(ExamSession $examSession): RedirectResponse
     {
-        // TODO: Tampilkan form edit sesi ujian
+        $examSession->delete();
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Sesi ujian berhasil diperbarui.',
+        ]);
+
+        return back();
     }
 
-    public function update(Request $request, ExamSession $examSession)
-    {
-        // TODO: Update sesi ujian
-    }
+    public function regenerateToken(
+        ExamSession $examSession,
+        SaveExamSessionAction $action
+    ): RedirectResponse {
+        $action->regenerateToken($examSession);
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Token sesi berhasil diperbarui.',
+        ]);
 
-    public function destroy(ExamSession $examSession)
-    {
-        // TODO: Hapus sesi ujian
-    }
-
-    public function regenerateToken(ExamSession $examSession)
-    {
-        // TODO: Generate ulang token sesi ujian yang baru
+        return back();
     }
 }
