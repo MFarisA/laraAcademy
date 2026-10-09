@@ -33,7 +33,7 @@ class ExamSessionResource extends JsonResource
                     'total_duration_minutes' => $this->template->total_duration_minutes,
                 ];
             }),
-            'classroom' =>  ClassRoomResource::make($this->whenLoaded('classroom')),
+            'classroom' => ClassRoomResource::make($this->whenLoaded('classroom')),
             'attempts_count' => $this->whenCounted('attempts'),
             'created_at' => $this->created_at?->toIsoString(),
         ];

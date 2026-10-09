@@ -10,7 +10,6 @@ use App\Models\Academic\Classroom;
 use App\Models\Assessment\Exam\ExamSession;
 use App\Models\Assessment\Exam\ExamTemplate;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,6 +22,7 @@ class ExamSessionController extends Controller
             ->withCount('attempts')
             ->latest('id')
             ->paginate(15);
+
         return Inertia::render('Assessment/ExamSession/Index', [
             'sessions' => ExamSessionResource::collection($examSession),
             'templates' => ExamTemplate::select(['id', 'title'])->get(),
@@ -37,7 +37,7 @@ class ExamSessionController extends Controller
         $action->handle($request->validated());
         Inertia::flash('toast', [
             'type' => 'success',
-            'message' => 'Sesi ujian berhasil dibuat.'
+            'message' => 'Sesi ujian berhasil dibuat.',
         ]);
 
         return back();

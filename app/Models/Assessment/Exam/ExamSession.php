@@ -41,6 +41,9 @@ class ExamSession extends Model
         );
     }
 
+    /**
+     *
+     */
     public static function generateUniqueToken(): string
     {
         do {
