@@ -22,6 +22,7 @@ class LearningMaterialResource extends JsonResource
         $isExternalLink = $this->type === 'link';
 
         return [
+            'id' => $this->id,
             'subject_id' => $this->subject_id,
             'program_id' => $this->program_id,
             'title' => $this->title,

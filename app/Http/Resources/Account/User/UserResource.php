@@ -20,6 +20,7 @@ class UserResource extends JsonResource
     {
         return [
             'name' => $this->name,
+            'id' => $this->id,
             'email' => $this->email,
             'is_active' => (bool) $this->is_active,
             'branch_id' => $this->branch_id,

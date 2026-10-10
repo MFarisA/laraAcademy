@@ -18,6 +18,7 @@ class ExamTemplateResource extends JsonResource
     {
         return [
             'program_id' => $this->program_id,
+            'id' => $this->id,
             'title' => $this->title,
             'type' => $this->type,
             'total_duration_minutes' => $this->total_duration_minutes,
