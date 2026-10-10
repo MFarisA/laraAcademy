@@ -21,7 +21,7 @@ class ClassroomController extends Controller
         $classRoom = Classroom::query()->with(['batch', 'branch'])->paginate(10);
 
         return Inertia::render('Academic/Classroom/Index', [
-            'Classrooms' => ClassRoomResource::collection($classRoom),
+            'classrooms' => ClassRoomResource::collection($classRoom),
         ]);
     }
 

@@ -37,7 +37,7 @@ class ClassScheduleController extends Controller
     public function show(ClassSchedule $schedule): Response
     {
         return Inertia::render('Schedules/Show', [
-            'schedules' => ClassScheduleResource::make($schedule->load(['classroom', 'subject', 'instructor'])),
+            'schedule' => ClassScheduleResource::make($schedule->load(['classroom', 'subject', 'instructor'])),
         ]);
     }
 

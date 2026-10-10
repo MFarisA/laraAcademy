@@ -21,7 +21,7 @@ class BatchController extends Controller
         $batch = Batch::query()->with('program')->paginate(10);
 
         return Inertia::render('Academic/Batch/Index', [
-            'Batches' => BatchResource::collection($batch),
+            'batches' => BatchResource::collection($batch),
         ]);
     }
 

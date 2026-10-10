@@ -35,8 +35,8 @@ class BranchController extends Controller
 
     public function show(Branch $branch): Response
     {
-        return Inertia::render('branches/Show', [
-            'branches' => new BranchResource($branch),
+        return Inertia::render('Branches/Show', [
+            'branch' => new BranchResource($branch),
         ]);
     }
 
