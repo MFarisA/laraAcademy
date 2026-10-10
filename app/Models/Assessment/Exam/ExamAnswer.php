@@ -24,7 +24,7 @@ class ExamAnswer extends Model
     use HasFactory;
 
     #[Override]
-    public function casts()
+    public function casts(): array
     {
         return [
             'score_earned' => 'decimal:2',

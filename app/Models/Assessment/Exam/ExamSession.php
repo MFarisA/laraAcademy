@@ -26,7 +26,7 @@ class ExamSession extends Model
     use HasFactory;
 
     #[\Override]
-    public function casts()
+    public function casts(): array
     {
         return [
             'start_time' => 'datetime',
@@ -34,16 +34,17 @@ class ExamSession extends Model
         ];
     }
 
+    /**
+     * @return Attribute<string|null, string|null>
+     */
     protected function token(): Attribute
     {
         return Attribute::make(
-            set: fn(?string $value) => $value ? Str::upper($value) : null,
+            get: fn (?string $value) => $value,
+            set: fn (?string $value) => $value ? Str::upper($value) : null,
         );
     }
 
-    /**
-     *
-     */
     public static function generateUniqueToken(): string
     {
         do {
