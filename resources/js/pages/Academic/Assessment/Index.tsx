@@ -100,9 +100,11 @@ export default function Index({ questions, subjects, filters }: PageProps) {
      * `query`, seluruh query string lama hilang setiap kali pindah halaman.
      */
     const goToPage = (page: number) => {
-        router.get(index.url({ mergeQuery: { page } }), {
-            preserveScroll: true,
-        });
+        router.get(
+            index.url({ mergeQuery: { page } }),
+            {},
+            { preserveScroll: true },
+        );
     };
 
     return (
