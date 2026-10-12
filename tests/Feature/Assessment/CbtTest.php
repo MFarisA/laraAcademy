@@ -42,7 +42,7 @@ beforeEach(function () {
         'total_duration_minutes' => 100,
     ]);
 
-    // Subtes TWK
+    // Subtes TWK (Standard Rule)
     $this->subjectTwk = Subject::create(['name' => 'TWK', 'code' => 'TWK']);
     $this->sectionTwk = ExamSection::create([
         'exam_template_id' => $this->template->id,
@@ -77,6 +77,42 @@ beforeEach(function () {
     ]);
 
     $this->sectionTwk->questions()->attach($this->questionTwk->id, ['order_index' => 1]);
+
+    // Subtes TKP (TKP Rule)
+    $this->subjectTkp = Subject::create(['name' => 'TKP', 'code' => 'TKP']);
+    $this->sectionTkp = ExamSection::create([
+        'exam_template_id' => $this->template->id,
+        'subject_id' => $this->subjectTkp->id,
+        'title' => 'Tes Karakteristik Pribadi',
+        'passing_grade' => 150,
+        'duration_minutes' => 35,
+        'order_index' => 2,
+    ]);
+
+    $this->questionTkp = Question::create([
+        'subject_id' => $this->subjectTkp->id,
+        'question_text' => 'Saat rekan tim terlambat, respon Anda adalah?',
+        'grading_rule' => GradingRuleEnum::TKP,
+        'difficulty_level' => DifficultyLevelEnum::MEDIUM,
+    ]);
+
+    $this->optTkpFive = QuestionOption::create([
+        'question_id' => $this->questionTkp->id,
+        'option_label' => 'A',
+        'option_text' => 'Menghubungi dan membagi beban kerja',
+        'is_correct' => false,
+        'weight_score' => 5,
+    ]);
+
+    $this->optTkpThree = QuestionOption::create([
+        'question_id' => $this->questionTkp->id,
+        'option_label' => 'B',
+        'option_text' => 'Menunggu hingga datang',
+        'is_correct' => false,
+        'weight_score' => 3,
+    ]);
+
+    $this->sectionTkp->questions()->attach($this->questionTkp->id, ['order_index' => 1]);
 
     // Sesi Ujian Aktif
     $this->session = ExamSession::create([
@@ -185,6 +221,62 @@ test('other student cannot save answer or submit attempt of another student', fu
         ]);
 
     $response->assertForbidden();
+
+    $submitResponse = $this->actingAs($this->otherStudent)
+        ->postJson(route('cbt.attempts.submit', $attempt));
+
+    $submitResponse->assertForbidden();
 });
 
-test('student can submit attempt and scoring engine calculates section results correctly')->todo();
+test('student can submit attempt and scoring engine calculates section results correctly', function () {
+    $attempt = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $this->student->id,
+        'status' => ExamAttemptStatusEnum::IN_PROGRESS,
+        'started_at' => now(),
+    ]);
+
+    // TWK: Jawab Benar (Bobot 5)
+    $this->actingAs($this->student)
+        ->putJson(route('cbt.attempts.answers.save', $attempt), [
+            'question_id' => $this->questionTwk->id,
+            'selected_option_id' => $this->optTwkCorrect->id,
+            'time_spent_seconds' => 20,
+        ]);
+
+    // TKP: Jawab Opsi A (Bobot 5)
+    $this->actingAs($this->student)
+        ->putJson(route('cbt.attempts.answers.save', $attempt), [
+            'question_id' => $this->questionTkp->id,
+            'selected_option_id' => $this->optTkpFive->id,
+            'time_spent_seconds' => 25,
+        ]);
+
+    // Submit ujian
+    $response = $this->actingAs($this->student)
+        ->postJson(route('cbt.attempts.submit', $attempt));
+
+    $response->assertOk()
+        ->assertJsonFragment([
+            'total_score' => 10.0,
+            'status' => ExamAttemptStatusEnum::COMPLETED->value,
+        ]);
+
+    $attempt->refresh();
+    expect($attempt->status)->toBe(ExamAttemptStatusEnum::COMPLETED);
+    expect((float) $attempt->total_score)->toBe(10.0);
+    expect($attempt->submitted_at)->not->toBeNull();
+
+    // Verifikasi tabel exam_section_results terisi otomatis
+    $this->assertDatabaseHas('exam_section_results', [
+        'exam_attempt_id' => $attempt->id,
+        'exam_section_id' => $this->sectionTwk->id,
+        'score' => 5.0,
+    ]);
+
+    $this->assertDatabaseHas('exam_section_results', [
+        'exam_attempt_id' => $attempt->id,
+        'exam_section_id' => $this->sectionTkp->id,
+        'score' => 5.0,
+    ]);
+});

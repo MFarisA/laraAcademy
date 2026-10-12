@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Assessment;
 
 use App\Actions\Assessment\Cbt\SaveExamAnswerAction;
+use App\Actions\Assessment\Cbt\ScoreAttemptAction;
 use App\Actions\Assessment\Cbt\StartExamAttemptAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Assessment\Cbt\EnterCbtSessionRequest;
@@ -84,8 +85,30 @@ class CbtController extends Controller
         ]);
     }
 
-    public function submit(Request $request, ExamAttempt $attempt)
-    {
-        // TODO: Kunci attempt ujian dan jalankan kalkulasi nilai akhir (scoring)
+    public function submit(
+        Request $request,
+        ExamAttempt $attempt,
+        ScoreAttemptAction $action
+    ): JsonResponse|RedirectResponse {
+        // Keamanan: Pastikan hanya pemilik attempt yang bisa submit
+        abort_unless($request->user()->id === $attempt->student_id, 403);
+
+        $scoredAttempt = $action->handle($attempt);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Ujian berhasil dikumpulkan.',
+                'total_score' => (float) $scoredAttempt->total_score,
+                'is_passed' => $scoredAttempt->is_passed,
+                'status' => $scoredAttempt->status,
+            ]);
+        }
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Ujian berhasil dikumpulkan.',
+        ]);
+
+        return to_route('dashboard');
     }
 }
