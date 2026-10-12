@@ -17,7 +17,7 @@ class EnterCbtSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // TODO: Validasi input token sesi
+            'token' => ['required', 'string', 'max:20'],
         ];
     }
 }

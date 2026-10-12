@@ -2,6 +2,7 @@
 
 namespace App\Models\Assessment\Exam;
 
+use App\Enum\Assessment\ExamAttemptStatusEnum;
 use App\Models\User;
 use Database\Factories\Assessment\Exam\ExamAttemptFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -31,6 +32,7 @@ class ExamAttempt extends Model
     public function casts(): array
     {
         return [
+            'status' => ExamAttemptStatusEnum::class,
             'started_at' => 'datetime',
             'total_score' => 'decimal:2',
             'is_passed' => 'boolean',

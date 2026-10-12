@@ -17,7 +17,9 @@ class SaveCbtAnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // TODO: Validasi question_id, selected_option_id, time_spent_seconds
+            'question_id' => ['required', 'integer', 'exists:questions,id'],
+            'selected_option_id' => ['nullable', 'integer', 'exists:question_options,id'],
+            'time_spent_seconds' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }
