@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\Classroom\StoreClassroomRequest;
 use App\Http\Requests\Academic\Classroom\UpdateClassroomRequest;
 use App\Http\Resources\Academic\Classroom\ClassRoomResource;
+use App\Models\Academic\Batch;
 use App\Models\Academic\Classroom;
+use App\Models\Organization\Branch;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,7 +36,16 @@ class ClassroomController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Classroom created successfully']);
 
-        return back();
+        return to_route('classrooms.index');
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('Academic/Classroom/Create', [
+            'classroom' => ClassRoomResource::make(new Classroom),
+            'batches' => Batch::select('id', 'name')->orderBy('name')->get(),
+            'branches' => Branch::select('id', 'name')->orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -56,7 +67,16 @@ class ClassroomController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Classroom updated successfully']);
 
-        return back();
+        return to_route('classrooms.index');
+    }
+
+    public function edit(Classroom $classroom): Response
+    {
+        return Inertia::render('Academic/Classroom/Edit', [
+            'classroom' => ClassRoomResource::make($classroom),
+            'batches' => Batch::select('id', 'name')->orderBy('name')->get(),
+            'branches' => Branch::select('id', 'name')->orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -68,6 +88,6 @@ class ClassroomController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Classroom deleted successfully']);
 
-        return back();
+        return to_route('classrooms.index');
     }
 }

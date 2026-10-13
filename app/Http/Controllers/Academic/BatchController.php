@@ -7,6 +7,7 @@ use App\Http\Requests\Academic\Batch\StoreBatchRequest;
 use App\Http\Requests\Academic\Batch\UpdateBatchRequest;
 use App\Http\Resources\Academic\Batch\BatchResource;
 use App\Models\Academic\Batch;
+use App\Models\Academic\Program;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,7 +35,15 @@ class BatchController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Batch created successfully']);
 
-        return back();
+        return to_route('batches.index');
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('Academic/Batch/Create', [
+            'batch' => BatchResource::make(new Batch),
+            'programs' => Program::select('id', 'name')->orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -52,12 +61,19 @@ class BatchController extends Controller
      */
     public function update(UpdateBatchRequest $request, Batch $batch): RedirectResponse
     {
-        // UpdateBatchAction::run($batch, $request->validated());
         $batch->update($request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Batch updated successfully']);
 
-        return back();
+        return to_route('batches.index');
+    }
+
+    public function edit(Batch $batch): Response
+    {
+        return Inertia::render('Academic/Batch/Edit', [
+            'batch' => BatchResource::make($batch),
+            'programs' => Program::select('id', 'name')->orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -65,11 +81,10 @@ class BatchController extends Controller
      */
     public function destroy(Batch $batch): RedirectResponse
     {
-        // DeleteBatchAction::run($batch);
         $batch->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Batch deleted successfully']);
 
-        return back();
+        return to_route('batches.index');
     }
 }

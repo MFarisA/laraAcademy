@@ -1,7 +1,27 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { MoreVertical, Plus } from 'lucide-react';
+
 import Heading from '@/components/heading';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     Table,
     TableBody,
@@ -10,7 +30,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { index, show } from '@/routes/batches';
+import { create, destroy, edit, index, show } from '@/routes/batches';
+
+type Program = {
+    id: number;
+    name: string;
+};
 
 type Batch = {
     id: number;
@@ -18,8 +43,8 @@ type Batch = {
     name: string;
     start_date: string;
     end_date: string;
-    program?: { id: number; name: string; code?: string | null } | null;
-    classrooms_count?: number;
+    classrooms_count?: number | null;
+    program?: Program | null;
 };
 
 type PaginationMeta = {
@@ -60,10 +85,18 @@ export default function Index({ batches }: PageProps) {
             <h1 className="sr-only">Angkatan</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Angkatan"
-                    description="Kelola angkatan beserta periode belajar dan jumlah kelasnya."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Angkatan"
+                        description="Kelola angkatan beserta periode belajar dan jumlah kelasnya."
+                    />
+                    <Button asChild className="self-start">
+                        <Link href={create.url()}>
+                            <Plus />
+                            Tambah Angkatan
+                        </Link>
+                    </Button>
+                </div>
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -77,6 +110,9 @@ export default function Index({ batches }: PageProps) {
                                 <TableHead className="w-24">
                                     Jumlah Kelas
                                 </TableHead>
+                                <TableHead className="w-24 text-right">
+                                    Aksi
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -84,7 +120,7 @@ export default function Index({ batches }: PageProps) {
                             {data.length === 0 ? (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={6}
+                                        colSpan={7}
                                         className="h-32 text-center text-muted-foreground"
                                     >
                                         Belum ada angkatan.
@@ -130,6 +166,87 @@ export default function Index({ batches }: PageProps) {
 
                                             <TableCell className="text-muted-foreground">
                                                 {batch.classrooms_count ?? 0}
+                                            </TableCell>
+
+                                            <TableCell className="text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon-sm"
+                                                            aria-label="Aksi angkatan"
+                                                        >
+                                                            <MoreVertical />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={edit.url(
+                                                                    batch.id,
+                                                                )}
+                                                            >
+                                                                Edit
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger
+                                                                asChild
+                                                            >
+                                                                <DropdownMenuItem
+                                                                    variant="destructive"
+                                                                    onSelect={(
+                                                                        event,
+                                                                    ) =>
+                                                                        event.preventDefault()
+                                                                    }
+                                                                >
+                                                                    Hapus
+                                                                </DropdownMenuItem>
+                                                            </AlertDialogTrigger>
+                                                            <AlertDialogContent>
+                                                                <AlertDialogHeader>
+                                                                    <AlertDialogTitle>
+                                                                        Hapus
+                                                                        angkatan
+                                                                        ini?
+                                                                    </AlertDialogTitle>
+                                                                    <AlertDialogDescription>
+                                                                        Tindakan
+                                                                        ini
+                                                                        tidak
+                                                                        bisa
+                                                                        dibatalkan.
+                                                                    </AlertDialogDescription>
+                                                                </AlertDialogHeader>
+                                                                <AlertDialogFooter>
+                                                                    <AlertDialogCancel>
+                                                                        Batal
+                                                                    </AlertDialogCancel>
+                                                                    <AlertDialogAction
+                                                                        variant="destructive"
+                                                                        asChild
+                                                                    >
+                                                                        <Link
+                                                                            href={destroy.url(
+                                                                                batch.id,
+                                                                            )}
+                                                                            method="delete"
+                                                                            as="button"
+                                                                        >
+                                                                            Hapus
+                                                                        </Link>
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     );

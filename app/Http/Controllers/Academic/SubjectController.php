@@ -37,6 +37,13 @@ class SubjectController extends Controller
         return back();
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Academic/Subject/Create', [
+            'subject' => SubjectResource::make(new Subject),
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -57,6 +64,13 @@ class SubjectController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Subject updated successfully']);
 
         return back();
+    }
+
+    public function edit(Subject $subject): Response
+    {
+        return Inertia::render('Academic/Subject/Edit', [
+            'subject' => new SubjectResource($subject),
+        ]);
     }
 
     /**

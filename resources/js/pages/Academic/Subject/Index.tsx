@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
+
 import Heading from '@/components/heading';
 import {
     AlertDialog,
@@ -18,6 +19,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -28,13 +30,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { destroy, index, show } from '@/routes/subjects';
+import { create, destroy, edit, index, show } from '@/routes/subjects';
 
 type Subject = {
     id: number;
     name: string;
     code: string | null;
-    description: string | null;
 };
 
 type PaginationMeta = {
@@ -75,10 +76,18 @@ export default function Index({ subjects }: PageProps) {
             <h1 className="sr-only">Mata Pelajaran</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Mata Pelajaran"
-                    description="Kelola daftar mata pelajaran yang digunakan dalam pembelajaran."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Mata Pelajaran"
+                        description="Kelola daftar mata pelajaran yang digunakan dalam pembelajaran."
+                    />
+                    <Button asChild className="self-start">
+                        <Link href={create.url()}>
+                            <Plus />
+                            Tambah Mata Pelajaran
+                        </Link>
+                    </Button>
+                </div>
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -143,6 +152,18 @@ export default function Index({ subjects }: PageProps) {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={edit.url(
+                                                                    subject.id,
+                                                                )}
+                                                            >
+                                                                Edit
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
                                                         <AlertDialog>
                                                             <AlertDialogTrigger
                                                                 asChild
@@ -234,7 +255,7 @@ export default function Index({ subjects }: PageProps) {
                                 disabled={meta.current_page >= meta.last_page}
                                 onClick={() => goToPage(meta.current_page + 1)}
                             >
-                                Berikutnya
+                                Selanjutnya
                             </Button>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
+
 import Heading from '@/components/heading';
 import {
     AlertDialog,
@@ -18,6 +19,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -28,7 +30,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { destroy, index, show } from '@/routes/classrooms';
+import { create, destroy, edit, index, show } from '@/routes/classrooms';
 
 type Classroom = {
     id: number;
@@ -79,10 +81,18 @@ export default function Index({ classrooms }: PageProps) {
             <h1 className="sr-only">Kelas</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Kelas"
-                    description="Kelola kelas beserta cabang, angkatan, dan kapasitasnya."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Kelas"
+                        description="Kelola kelas beserta cabang, angkatan, dan kapasitasnya."
+                    />
+                    <Button asChild className="self-start">
+                        <Link href={create.url()}>
+                            <Plus />
+                            Tambah Kelas
+                        </Link>
+                    </Button>
+                </div>
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -167,6 +177,18 @@ export default function Index({ classrooms }: PageProps) {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={edit.url(
+                                                                    classroom.id,
+                                                                )}
+                                                            >
+                                                                Edit
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
                                                         <AlertDialog>
                                                             <AlertDialogTrigger
                                                                 asChild
@@ -257,7 +279,7 @@ export default function Index({ classrooms }: PageProps) {
                                 disabled={meta.current_page >= meta.last_page}
                                 onClick={() => goToPage(meta.current_page + 1)}
                             >
-                                Berikutnya
+                                Selanjutnya
                             </Button>
                         </div>
                     </div>

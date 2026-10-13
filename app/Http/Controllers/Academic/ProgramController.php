@@ -37,6 +37,13 @@ class ProgramController extends Controller
         return back();
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Academic/Program/Create', [
+            'program' => ProgramResource::make(new Program),
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -57,6 +64,13 @@ class ProgramController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Program updated successfully']);
 
         return back();
+    }
+
+    public function edit(Program $program): Response
+    {
+        return Inertia::render('Academic/Program/Edit', [
+            'program' => new ProgramResource($program),
+        ]);
     }
 
     /**
