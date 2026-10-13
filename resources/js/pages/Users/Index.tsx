@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
+
 import Heading from '@/components/heading';
 import {
     AlertDialog,
@@ -29,7 +30,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { destroy, edit, index } from '@/routes/users';
+import { create, destroy, edit, index } from '@/routes/users';
 
 type UserBranch = {
     id: number;
@@ -43,8 +44,7 @@ type User = {
     is_active: boolean;
     branch_id: number | null;
     branch?: UserBranch | null;
-    roles?: string[];
-    updated_at: string | null;
+    roles?: { id: number; name: string }[];
 };
 
 type PaginationMeta = {
@@ -90,10 +90,18 @@ export default function Index({ users }: PageProps) {
             <h1 className="sr-only">Pengguna</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Pengguna"
-                    description="Kelola akun pengguna, status aktif, dan penugasan cabangnya."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Pengguna"
+                        description="Kelola akun pengguna, status aktif, dan penugasan cabangnya."
+                    />
+                    <Button asChild className="self-start">
+                        <Link href={create.url()}>
+                            <Plus />
+                            Tambah Pengguna
+                        </Link>
+                    </Button>
+                </div>
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -148,21 +156,38 @@ export default function Index({ users }: PageProps) {
 
                                             <TableCell>
                                                 {user.is_active ? (
-                                                    <Badge className="border-transparent bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                                                    <Badge variant="default">
                                                         Aktif
                                                     </Badge>
                                                 ) : (
-                                                    <Badge variant="secondary">
+                                                    <Badge variant="outline">
                                                         Nonaktif
                                                     </Badge>
                                                 )}
                                             </TableCell>
 
                                             <TableCell>
-                                                {user.roles &&
-                                                user.roles.length > 0
-                                                    ? user.roles.join(', ')
-                                                    : '—'}
+                                                <div className="flex flex-wrap gap-1">
+                                                    {user.roles &&
+                                                    user.roles.length > 0 ? (
+                                                        user.roles.map(
+                                                            (role) => (
+                                                                <Badge
+                                                                    key={
+                                                                        role.id
+                                                                    }
+                                                                    variant="secondary"
+                                                                >
+                                                                    {role.name}
+                                                                </Badge>
+                                                            ),
+                                                        )
+                                                    ) : (
+                                                        <span className="text-muted-foreground">
+                                                            —
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </TableCell>
 
                                             <TableCell className="text-right">
@@ -281,7 +306,7 @@ export default function Index({ users }: PageProps) {
                                 disabled={meta.current_page >= meta.last_page}
                                 onClick={() => goToPage(meta.current_page + 1)}
                             >
-                                Berikutnya
+                                Selanjutnya
                             </Button>
                         </div>
                     </div>

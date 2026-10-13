@@ -9,12 +9,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Account\User\StoreUserRequest;
 use App\Http\Requests\Account\User\UpdateUserRequest;
 use App\Http\Resources\Account\User\UserResource;
+use App\Models\Organization\Branch;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -44,12 +46,21 @@ class UserController extends Controller
         return to_route('users.index');
     }
 
-    public function edit(User $user): Response
+    public function create(): Response
     {
-        Gate::authorize('update', $user);
+        Gate::authorize('create', User::class);
 
-        return Inertia::render('Users/Edit', [
-            'user' => new UserResource($user->load(['branch', 'roles'])),
+        return Inertia::render('Users/Create', [
+            'user' => new UserResource(new User),
+            'branches' => Branch::select('id', 'name')->get(),
+            'roles' => Role::select('id', 'name')->get(),
+        ]);
+    }
+
+    public function show(User $user): Response
+    {
+        return Inertia::render('Users/Show', [
+            'user' => UserResource::make($user),
         ]);
     }
 
@@ -60,6 +71,17 @@ class UserController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated successfully']);
 
         return to_route('users.index');
+    }
+
+    public function edit(User $user): Response
+    {
+        Gate::authorize('update', $user);
+
+        return Inertia::render('Users/Edit', [
+            'user' => UserResource::make($user->load(['branch', 'roles'])),
+            'branches' => Branch::select('id', 'name')->orderBy('name')->get(),
+            'roles' => Role::select('id', 'name')->orderBy('name')->get(),
+        ]);
     }
 
     public function destroy(User $user, DeleteUserAction $deleteUser): RedirectResponse

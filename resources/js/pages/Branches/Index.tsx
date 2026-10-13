@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus } from 'lucide-react';
+
 import Heading from '@/components/heading';
 import {
     AlertDialog,
@@ -18,6 +19,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -28,7 +30,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { destroy, show } from '@/routes/branches';
+import { create, destroy, edit, show } from '@/routes/branches';
 
 type Branch = {
     id: number;
@@ -54,10 +56,18 @@ export default function Index({ branches }: PageProps) {
             <h1 className="sr-only">Cabang</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Cabang"
-                    description="Kelola data cabang beserta kode dan lokasinya."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Cabang"
+                        description="Kelola data cabang beserta kode dan lokasinya."
+                    />
+                    <Button asChild className="self-start">
+                        <Link href={create.url()}>
+                            <Plus />
+                            Tambah Cabang
+                        </Link>
+                    </Button>
+                </div>
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -127,6 +137,18 @@ export default function Index({ branches }: PageProps) {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={edit.url(
+                                                                    branch.id,
+                                                                )}
+                                                            >
+                                                                Edit
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
                                                         <AlertDialog>
                                                             <AlertDialogTrigger
                                                                 asChild
