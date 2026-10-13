@@ -1,12 +1,12 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pencil } from 'lucide-react';
 
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { index } from '@/routes/exam-templates';
+import { edit, index } from '@/routes/exam-templates';
 
 type ExamTemplateSection = {
     id: number;
@@ -52,23 +52,26 @@ export default function Show({ template: { data: examTemplate } }: PageProps) {
             <h1 className="sr-only">Detail Template Ujian</h1>
 
             <div className="space-y-6 px-6 py-6">
-                {/* Header & Back Button */}
+                {/* Header & Actions */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Heading
                         title="Detail Template Ujian"
                         description={`Melihat informasi dan bagian ujian untuk "${examTemplate.title}".`}
                     />
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="self-start"
-                    >
-                        <Link href={index.url()}>
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Kembali ke Daftar
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href={index.url()}>
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Kembali ke Daftar
+                            </Link>
+                        </Button>
+                        <Button size="sm" asChild>
+                            <Link href={edit.url(examTemplate.id)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit Template
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">
@@ -98,27 +101,28 @@ export default function Show({ template: { data: examTemplate } }: PageProps) {
                                                             '-'}
                                                     </span>
 
-                                                    <div className="pt-0.5">
-                                                        <p className="font-medium">
+                                                    <div>
+                                                        <h4 className="font-semibold text-foreground">
                                                             {section.title}
-                                                        </p>
-
-                                                        <p className="text-xs text-muted-foreground">
-                                                            Passing grade:{' '}
-                                                            {section.passing_grade ??
-                                                                '—'}
+                                                        </h4>
+                                                        <p className="mt-1 text-sm text-muted-foreground">
+                                                            Durasi:{' '}
+                                                            {formatDuration(
+                                                                section.duration_minutes,
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
 
-                                                <Badge
-                                                    variant="outline"
-                                                    className="shrink-0"
-                                                >
-                                                    {formatDuration(
-                                                        section.duration_minutes,
-                                                    )}
-                                                </Badge>
+                                                <div className="text-right">
+                                                    <span className="text-xs text-muted-foreground">
+                                                        Passing Grade
+                                                    </span>
+                                                    <p className="text-lg font-bold text-foreground">
+                                                        {section.passing_grade ??
+                                                            '—'}
+                                                    </p>
+                                                </div>
                                             </div>
                                         );
                                     })
@@ -127,11 +131,11 @@ export default function Show({ template: { data: examTemplate } }: PageProps) {
                         </Card>
                     </div>
 
-                    {/* Informasi Template (1 Kolom Sidebar) */}
+                    {/* Informasi Utama Template (1 Kolom di Desktop) */}
                     <div>
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-base font-semibold">
+                                <CardTitle className="text-base font-semibold text-muted-foreground">
                                     Informasi Template
                                 </CardTitle>
                             </CardHeader>
@@ -140,7 +144,7 @@ export default function Show({ template: { data: examTemplate } }: PageProps) {
                                     <span className="text-xs text-muted-foreground">
                                         Judul
                                     </span>
-                                    <p className="mt-1 font-medium">
+                                    <p className="mt-1 font-medium text-foreground">
                                         {examTemplate.title}
                                     </p>
                                 </div>
@@ -164,7 +168,7 @@ export default function Show({ template: { data: examTemplate } }: PageProps) {
                                     <span className="text-xs text-muted-foreground">
                                         Jenis
                                     </span>
-                                    <p className="mt-1 font-medium">
+                                    <p className="mt-1 font-medium text-foreground">
                                         {examTemplate.type ?? '—'}
                                     </p>
                                 </div>
@@ -173,12 +177,23 @@ export default function Show({ template: { data: examTemplate } }: PageProps) {
 
                                 <div>
                                     <span className="text-xs text-muted-foreground">
-                                        Durasi Total
+                                        Total Durasi
                                     </span>
-                                    <p className="mt-1 font-medium">
+                                    <p className="mt-1 font-medium text-foreground">
                                         {formatDuration(
                                             examTemplate.total_duration_minutes,
                                         )}
+                                    </p>
+                                </div>
+
+                                <Separator />
+
+                                <div>
+                                    <span className="text-xs text-muted-foreground">
+                                        Total Bagian Ujian
+                                    </span>
+                                    <p className="mt-1 font-medium text-foreground">
+                                        {sections.length} bagian
                                     </p>
                                 </div>
                             </CardContent>

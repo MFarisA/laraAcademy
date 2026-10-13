@@ -25,8 +25,8 @@ class ExamSessionController extends Controller
 
         return Inertia::render('Assessment/ExamSession/Index', [
             'sessions' => ExamSessionResource::collection($examSession),
-            'templates' => ExamTemplate::select(['id', 'title'])->get(),
-            'classrooms' => Classroom::select(['id', 'name'])->get(),
+            'templates' => ExamTemplate::select(['id', 'title'])->orderBy('title')->get(),
+            'classrooms' => Classroom::select(['id', 'name'])->orderBy('name')->get(),
         ]);
     }
 
@@ -40,7 +40,16 @@ class ExamSessionController extends Controller
             'message' => 'Sesi ujian berhasil dibuat.',
         ]);
 
-        return back();
+        return to_route('exam-sessions.index');
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('Assessment/ExamSession/Create', [
+            'session' => ExamSessionResource::make(new ExamSession),
+            'templates' => ExamTemplate::select(['id', 'title'])->orderBy('title')->get(),
+            'classrooms' => Classroom::select(['id', 'name'])->orderBy('name')->get(),
+        ]);
     }
 
     public function show(ExamSession $examSession): Response
@@ -63,7 +72,16 @@ class ExamSessionController extends Controller
             'message' => 'Sesi ujian berhasil diperbarui.',
         ]);
 
-        return back();
+        return to_route('exam-sessions.index');
+    }
+
+    public function edit(ExamSession $examSession): Response
+    {
+        return Inertia::render('Assessment/ExamSession/Edit', [
+            'session' => ExamSessionResource::make($examSession->load(['template', 'classroom'])),
+            'templates' => ExamTemplate::select(['id', 'title'])->orderBy('title')->get(),
+            'classrooms' => Classroom::select(['id', 'name'])->orderBy('name')->get(),
+        ]);
     }
 
     public function destroy(ExamSession $examSession): RedirectResponse
@@ -71,10 +89,10 @@ class ExamSessionController extends Controller
         $examSession->delete();
         Inertia::flash('toast', [
             'type' => 'success',
-            'message' => 'Sesi ujian berhasil diperbarui.',
+            'message' => 'Sesi ujian berhasil dihapus.',
         ]);
 
-        return back();
+        return to_route('exam-sessions.index');
     }
 
     public function regenerateToken(

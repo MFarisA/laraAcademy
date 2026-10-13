@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { MoreVertical } from 'lucide-react';
+import { Eye, MoreVertical, Pencil, Plus } from 'lucide-react';
+
 import Heading from '@/components/heading';
 import {
     AlertDialog,
@@ -17,6 +18,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -27,7 +29,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { destroy, index, show } from '@/routes/exam-sessions';
+import { create, destroy, edit, index, show } from '@/routes/exam-sessions';
 
 type ExamSession = {
     id: number;
@@ -105,10 +107,18 @@ export default function Index({ sessions }: PageProps) {
             <h1 className="sr-only">Sesi Ujian</h1>
 
             <div className="space-y-6 px-6 py-6">
-                <Heading
-                    title="Sesi Ujian"
-                    description="Kelola sesi ujian, token peserta, dan jadwal pelaksanaannya."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <Heading
+                        title="Sesi Ujian"
+                        description="Kelola sesi ujian, token peserta, dan jadwal pelaksanaannya."
+                    />
+                    <Button asChild size="sm" className="self-start">
+                        <Link href={create.url()}>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Tambah Sesi Ujian
+                        </Link>
+                    </Button>
+                </div>
 
                 <div className="overflow-hidden rounded-lg border border-border bg-card">
                     <Table>
@@ -195,10 +205,37 @@ export default function Index({ sessions }: PageProps) {
                                                             size="icon-sm"
                                                             aria-label="Aksi sesi ujian"
                                                         >
-                                                            <MoreVertical />
+                                                            <MoreVertical className="h-4 w-4" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={show.url(
+                                                                    session.id,
+                                                                )}
+                                                                className="flex items-center gap-2"
+                                                            >
+                                                                <Eye className="h-4 w-4" />
+                                                                Detail
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={edit.url(
+                                                                    session.id,
+                                                                )}
+                                                                className="flex items-center gap-2"
+                                                            >
+                                                                <Pencil className="h-4 w-4" />
+                                                                Edit
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
                                                         <AlertDialog>
                                                             <AlertDialogTrigger
                                                                 asChild
@@ -290,7 +327,7 @@ export default function Index({ sessions }: PageProps) {
                                 disabled={meta.current_page >= meta.last_page}
                                 onClick={() => goToPage(meta.current_page + 1)}
                             >
-                                Berikutnya
+                                Selanjutnya
                             </Button>
                         </div>
                     </div>

@@ -20,6 +20,7 @@ class ExamSessionResource extends JsonResource
         return [
             'id' => $this->id,
             'exam_template_id' => $this->exam_template_id,
+            'classroom_id' => $this->classroom_id,
             'title' => $this->title,
             'token' => $this->token,
             'start_time' => $this->start_time,

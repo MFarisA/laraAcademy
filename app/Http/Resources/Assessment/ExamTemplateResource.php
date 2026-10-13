@@ -28,6 +28,7 @@ class ExamTemplateResource extends JsonResource
             ],
             'sections' => $this->whenLoaded('sections', fn () => $this->sections->map(fn ($section) => [
                 'id' => $section->id,
+                'subject_id' => $section->subject_id,
                 'title' => $section->title,
                 'passing_grade' => $section->passing_grade,
                 'duration_minutes' => $section->duration_minutes,
