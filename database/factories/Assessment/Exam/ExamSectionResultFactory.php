@@ -12,8 +12,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ExamSectionResultFactory extends Factory
 {
-    protected $model = ExamSectionResult::class;
-
     /**
      * Define the model's default state.
      *
@@ -24,8 +22,8 @@ class ExamSectionResultFactory extends Factory
         return [
             'exam_attempt_id' => ExamAttempt::factory(),
             'exam_section_id' => ExamSection::factory(),
-            'score' => fake()->randomFloat(2, 50, 150),
-            'is_passed' => fake()->boolean(70),
+            'score' => fake()->randomFloat(2, 60, 180),
+            'is_passed' => fake()->boolean(75),
         ];
     }
 }

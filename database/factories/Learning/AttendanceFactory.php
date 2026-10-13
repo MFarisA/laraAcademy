@@ -2,7 +2,10 @@
 
 namespace Database\Factories\Learning;
 
+use App\Enum\Learning\AttendanceStatusEnum;
 use App\Models\Learning\Attendance;
+use App\Models\Learning\ClassSchedule;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +21,16 @@ class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'class_schedule_id' => ClassSchedule::factory(),
+            'student_id' => User::factory(),
+            'status' => fake()->randomElement([
+                AttendanceStatusEnum::PRESENT,
+                AttendanceStatusEnum::PRESENT,
+                AttendanceStatusEnum::PERMITTED,
+                AttendanceStatusEnum::SICK,
+                AttendanceStatusEnum::ABSENT,
+            ]),
+            'verified_at' => now(),
         ];
     }
 }

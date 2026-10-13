@@ -2,7 +2,9 @@
 
 namespace Database\Factories\Academic\Enrollment;
 
+use App\Models\Academic\Classroom;
 use App\Models\Academic\Enrollment\ClassroomEnrollment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +20,10 @@ class ClassroomEnrollmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'classroom_id' => Classroom::factory(),
+            'student_id' => User::factory(),
+            'status' => fake()->randomElement(['active', 'active', 'active', 'finished']),
+            'enrolled_at' => fake()->dateTimeBetween('-2 months', 'now'),
         ];
     }
 }

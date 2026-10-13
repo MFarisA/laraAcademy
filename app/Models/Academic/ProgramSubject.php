@@ -18,6 +18,8 @@ class ProgramSubject extends Pivot
     /** @use HasFactory<ProgramSubjectFactory> */
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'program_subjects';
 
     /**

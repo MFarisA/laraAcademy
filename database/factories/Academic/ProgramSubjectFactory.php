@@ -2,7 +2,9 @@
 
 namespace Database\Factories\Academic;
 
+use App\Models\Academic\Program;
 use App\Models\Academic\ProgramSubject;
+use App\Models\Academic\Subject;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +20,9 @@ class ProgramSubjectFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'program_id' => Program::factory(),
+            'subject_id' => Subject::factory(),
+            'min_passing_score' => fake()->randomElement([65.00, 70.00, 80.00, 156.00]),
         ];
     }
 }

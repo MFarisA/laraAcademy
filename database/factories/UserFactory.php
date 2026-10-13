@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Organization\Branch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -33,6 +34,7 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
+            'is_active' => true,
         ];
     }
 
@@ -55,6 +57,20 @@ class UserFactory extends Factory
             'two_factor_secret' => encrypt('secret'),
             'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
             'two_factor_confirmed_at' => now(),
+        ]);
+    }
+
+    public function withRole(string $role): static
+    {
+        return $this->afterCreating(function (User $user) use ($role) {
+            $user->assignRole($role);
+        });
+    }
+
+    public function forBranch(Branch|int $branch): static
+    {
+        return $this->state(fn () => [
+            'branch_id' => $branch instanceof Branch ? $branch->id : $branch,
         ]);
     }
 }

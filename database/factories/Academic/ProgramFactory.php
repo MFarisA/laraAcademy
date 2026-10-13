@@ -18,7 +18,14 @@ class ProgramFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->unique()->randomElement([
+                'Persiapan CPNS & Kedinasan Akbar',
+                'Intensif SNBT UTBK 2026',
+                'Sekolah Kedinasan IPDN & POLTEKIP',
+                'Akpol & Akmil Bintara Camp',
+                'Bimbel Kedinasan STAN & STIS',
+            ]).' '.fake()->numberBetween(1, 999),
+            'description' => fake()->paragraph(),
         ];
     }
 }

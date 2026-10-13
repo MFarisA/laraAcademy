@@ -19,6 +19,8 @@ class ExamSectionQuestion extends Pivot
     /** @use HasFactory<ExamSectionQuestionFactory> */
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * @return BelongsTo<ExamSection, $this>
      */

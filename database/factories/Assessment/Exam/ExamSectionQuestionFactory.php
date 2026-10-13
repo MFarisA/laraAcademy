@@ -2,7 +2,9 @@
 
 namespace Database\Factories\Assessment\Exam;
 
+use App\Models\Assessment\Exam\ExamSection;
 use App\Models\Assessment\Exam\ExamSectionQuestion;
+use App\Models\Assessment\Question\Question;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +20,9 @@ class ExamSectionQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'exam_section_id' => ExamSection::factory(),
+            'question_id' => Question::factory(),
+            'order_index' => fake()->numberBetween(1, 50),
         ];
     }
 }
