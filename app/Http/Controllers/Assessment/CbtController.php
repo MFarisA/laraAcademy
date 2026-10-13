@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Assessment\Cbt\EnterCbtSessionRequest;
 use App\Http\Requests\Assessment\Cbt\SaveCbtAnswerRequest;
 use App\Http\Resources\Assessment\CbtExamSheetResource;
+use App\Http\Resources\Assessment\ExamSessionResource;
 use App\Models\Assessment\Exam\ExamAttempt;
 use App\Models\Assessment\Exam\ExamSession;
 use App\Models\User;
@@ -22,6 +23,24 @@ use Inertia\Response;
 
 class CbtController extends Controller
 {
+    public function index(Request $request): Response
+    {
+        $user = $request->user();
+        $session = ExamSession::query()
+            ->accessibleBy($user)
+            ->with([
+                'template',
+                'attempts' => fn ($data) => $data->where('student_id', $user->id)->latest(),
+            ])
+            ->latest('start_time')
+            ->paginate($request->integer('per_page', 10))
+            ->withQueryString();
+
+        return Inertia::render('Assessment/Cbt/Index', [
+            'sessions' => ExamSessionResource::collection($session),
+        ]);
+    }
+
     public function enter(EnterCbtSessionRequest $request, ExamSession $examSession): JsonResponse|RedirectResponse
     {
         $inputToken = Str::upper($request->validated('token'));
@@ -90,7 +109,6 @@ class CbtController extends Controller
         ExamAttempt $attempt,
         ScoreAttemptAction $action
     ): JsonResponse|RedirectResponse {
-        // Keamanan: Pastikan hanya pemilik attempt yang bisa submit
         abort_unless($request->user()->id === $attempt->student_id, 403);
 
         $scoredAttempt = $action->handle($attempt);

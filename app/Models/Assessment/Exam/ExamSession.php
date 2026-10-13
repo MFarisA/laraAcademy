@@ -3,7 +3,9 @@
 namespace App\Models\Assessment\Exam;
 
 use App\Models\Academic\Classroom;
+use App\Models\User;
 use Database\Factories\Assessment\Exam\ExamSessionFactory;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,6 +54,14 @@ class ExamSession extends Model
         } while (static::where('token', $token)->exists());
 
         return $token;
+    }
+
+    public function scopeAccessibleBy(Builder $query, User $user): void
+    {
+        $query->where(function (Builder $data) use ($user) {
+            $data->whereNull('classroom_id')
+                ->orWhereIn('classroom_id', $user->enrollments()->select('classroom_id'));
+        });
     }
 
     /**

@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin-branch'])->group(
 Route::middleware(['auth', 'verified', 'role:instructor|super-admin'])->group(function () {
     Route::inertia('schedules', 'dashboard')->name('schedules.index');
     Route::post('materials', [LearningMaterialController::class, 'store'])->name('materials.store');
+    Route::delete('materials/{material}', [LearningMaterialController::class, 'destroy'])->name('materials.destroy');
     Route::get('subjects/{subject}/materials', [LearningMaterialController::class, 'index'])->name('subjects.materials.index');
 });
 
@@ -64,6 +65,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin'])->group(function () {
 
 // Student CBT Portal
 Route::middleware(['auth', 'verified', 'role:student|super-admin'])->prefix('cbt')->name('cbt.')->group(function () {
+    Route::get('sessions', [CbtController::class, 'index'])->name('sessions.index');
     Route::post('sessions/{exam_session}/enter', [CbtController::class, 'enter'])->name('sessions.enter');
     Route::match(['get', 'post'], 'sessions/{exam_session}/start', [CbtController::class, 'start'])->name('sessions.start');
     Route::put('attempts/{attempt}/answers', [CbtController::class, 'saveAnswer'])->name('attempts.answers.save');

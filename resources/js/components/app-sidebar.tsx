@@ -6,6 +6,7 @@ import {
     ClipboardList,
     FileText,
     GraduationCap,
+    Laptop,
     Layers,
     LayoutGrid,
     ListChecks,
@@ -28,6 +29,7 @@ import {
 import { dashboard } from '@/routes';
 import { index as batchesIndex } from '@/routes/batches';
 import { index as branchesIndex } from '@/routes/branches';
+import { index as cbtSessionsIndex } from '@/routes/cbt/sessions';
 import { index as classroomsIndex } from '@/routes/classrooms';
 import { index as examSessionsIndex } from '@/routes/exam-sessions';
 import { index as examTemplatesIndex } from '@/routes/exam-templates';
@@ -43,6 +45,11 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Ujian CBT',
+        href: cbtSessionsIndex(),
+        icon: Laptop,
     },
     {
         title: 'Bank Soal',
@@ -96,19 +103,6 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-// const footerNavItems: NavItem[] = [
-//     {
-//         title: 'Repository',
-//         href: 'https://github.com/laravel/react-starter-kit',
-//         icon: FolderGit2,
-//     },
-//     {
-//         title: 'Documentation',
-//         href: 'https://laravel.com/docs/starter-kits#react',
-//         icon: BookOpen,
-//     },
-// ];
-
 export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -129,7 +123,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                {/*<NavFooter items={footerNavItems} className="mt-auto" />*/}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
