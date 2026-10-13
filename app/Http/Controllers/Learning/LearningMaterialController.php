@@ -49,4 +49,16 @@ class LearningMaterialController extends Controller
             $request->boolean('download')
         );
     }
+
+    public function destroy(LearningMaterial $material): RedirectResponse
+    {
+        $material->delete();
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Materi pembelajaran berhasil dihapus',
+        ]);
+
+        return back();
+    }
 }

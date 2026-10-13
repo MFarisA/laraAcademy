@@ -23,6 +23,9 @@ class ClassScheduleResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'classroom_id' => $this->classroom_id,
+            'subject_id' => $this->subject_id,
+            'instructor_id' => $this->instructor_id,
             'room_type' => $this->room_type,
             'meeting_link' => $this->meeting_link,
             'scheduled_at' => $this->scheduled_at,
