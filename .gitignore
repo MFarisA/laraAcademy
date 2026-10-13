@@ -32,9 +32,12 @@ graphify-out/
 _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
-.agents
-.claude
-.junie
+.agents/*
+.claude/*
+.junie/*
 CLAUDE.md
 .rtk
-.junie
+.junie/*
+.github/skills/
+AGENTS.md
+opencode.json

@@ -2,13 +2,20 @@
     "agents": [
         "claude_code",
         "junie",
-        "zed"
+        "zed",
+        "antigravity",
+        "opencode",
+        "copilot"
     ],
     "cloud": false,
     "guidelines": true,
     "mcp": true,
     "nightwatch": false,
-    "sail": false,
+    "packages": [
+        "lorisleiva/laravel-actions",
+        "spatie/laravel-permission"
+    ],
+    "sail": true,
     "skills": [
         "infer-conventions",
         "fortify-development",
@@ -16,6 +23,8 @@
         "wayfinder-development",
         "pest-testing",
         "inertia-react-development",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "laravel-actions",
+        "laravel-permission-development"
     ]
 }
