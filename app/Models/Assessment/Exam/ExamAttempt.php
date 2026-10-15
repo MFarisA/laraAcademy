@@ -6,12 +6,22 @@ use App\Enum\Assessment\ExamAttemptStatusEnum;
 use App\Models\User;
 use Database\Factories\Assessment\Exam\ExamAttemptFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Override;
 
+/**
+ * @property Carbon|null $started_at
+ * @property Carbon|null $submitted_at
+ * @property ExamAttemptStatusEnum $status
+ *
+ * @method static Builder<static> leaderboard(string $scope = 'national', ?int $branchId = null)
+ */
 #[Fillable([
     'exam_session_id',
     'student_id',
@@ -31,13 +41,47 @@ class ExamAttempt extends Model
     #[Override]
     public function casts(): array
     {
-        return [
-            'status' => ExamAttemptStatusEnum::class,
+        return ['status' => ExamAttemptStatusEnum::class,
             'started_at' => 'datetime',
             'total_score' => 'decimal:2',
             'is_passed' => 'boolean',
             'submitted_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Durasi pengerjaan dalam detik.
+     *
+     * @return Attribute<int|null, never>
+     */
+    protected function durationSeconds(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?int {
+                if (! $this->started_at || ! $this->submitted_at) {
+                    return null;
+                }
+
+                return (int) Carbon::parse($this->submitted_at)->diffInSeconds(Carbon::parse($this->started_at));
+            }
+        );
+    }
+
+    /**
+     * Scope query untuk leaderboard berdasarkan scope ('national' atau 'branch').
+     *
+     * @param  Builder<ExamAttempt>  $query
+     */
+    public function scopeLeaderboard(Builder $query, string $scope = 'national', ?int $branchId = null): void
+    {
+        $query->where('status', ExamAttemptStatusEnum::COMPLETED);
+
+        if ($scope === 'branch' && $branchId !== null) {
+            $query->whereHas('student', fn (Builder $q) => $q->where('branch_id', $branchId))
+                ->orderBy('branch_rank', 'asc');
+        } else {
+            $query->orderBy('national_rank', 'asc');
+        }
     }
 
     /**

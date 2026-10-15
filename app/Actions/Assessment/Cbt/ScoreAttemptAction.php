@@ -88,6 +88,8 @@ class ScoreAttemptAction
                 'submitted_at' => now(),
             ]);
 
+            CalculateSessionRanksAction::run($attempt->exam_session_id);
+
             return $attempt->fresh(['sectionResults', 'answers']);
         });
     }

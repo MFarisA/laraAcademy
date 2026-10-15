@@ -17,7 +17,7 @@ class AttendanceSeeder extends Seeder
         $pastSchedules = ClassSchedule::where('scheduled_at', '<', now())->with('classroom.students')->get();
 
         foreach ($pastSchedules as $schedule) {
-            $students = $schedule->classroom?->students ?? [];
+            $students = $schedule->classroom ? $schedule->classroom->students : [];
 
             foreach ($students as $student) {
                 Attendance::firstOrCreate(
@@ -29,11 +29,11 @@ class AttendanceSeeder extends Seeder
                         'status' => fake()->randomElement([
                             AttendanceStatusEnum::PRESENT->value,
                             AttendanceStatusEnum::PRESENT->value,
-                            AttendanceStatusEnum::PERMITTED->value,
+                            AttendanceStatusEnum::PRESENT->value,
                             AttendanceStatusEnum::SICK->value,
-                            AttendanceStatusEnum::ABSENT->value,
+                            AttendanceStatusEnum::PERMITTED->value,
                         ]),
-                        'verified_at' => (clone $schedule->scheduled_at)->modify('+2 hours'),
+                        'notes' => fake()->boolean(20) ? fake()->sentence() : null,
                     ]
                 );
             }

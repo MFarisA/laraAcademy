@@ -20,9 +20,12 @@ class LearningMaterialFactory extends Factory
     {
         $type = fake()->randomElement(['pdf', 'video', 'link']);
 
+        /** @var string $words */
+        $words = fake()->words(3, true);
+
         return [
             'subject_id' => Subject::factory(),
-            'title' => 'Modul Pendalaman '.fake()->words(3, true),
+            'title' => 'Modul Pendalaman '.$words,
             'type' => $type,
             'file_url' => $type === 'link' ? fake()->url() : 'https://storage.laraacademy.id/materials/sample_'.fake()->slug().'.pdf',
             'is_downloadable' => fake()->boolean(85),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Assessment;
 use App\Actions\Assessment\Cbt\SaveExamAnswerAction;
 use App\Actions\Assessment\Cbt\ScoreAttemptAction;
 use App\Actions\Assessment\Cbt\StartExamAttemptAction;
+use App\Enum\Access\RoleRegistryEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Assessment\Cbt\EnterCbtSessionRequest;
 use App\Http\Requests\Assessment\Cbt\SaveCbtAnswerRequest;
@@ -128,5 +129,47 @@ class CbtController extends Controller
         ]);
 
         return to_route('dashboard');
+    }
+
+    public function result(Request $request, ExamAttempt $attempt): Response
+    {
+        $user = $request->user();
+        abort_unless($user->hasRole(RoleRegistryEnum::SUPERADMIN) || $attempt->student_id === $user->id, 403);
+
+        $attempt->loadMissing([
+            'session.template.sections',
+            'sectionResults.section',
+            'student.branch',
+        ]);
+
+        return Inertia::render('Assessment/Cbt/Result', [
+            'attempt' => $attempt,
+            'session' => $attempt->session,
+        ]);
+    }
+
+    public function leaderboard(Request $request, ExamSession $examSession): Response
+    {
+        $user = $request->user();
+        $scope = $request->string('scope', 'national')->value();
+
+        $attempts = ExamAttempt::query()
+            ->where('exam_session_id', $examSession->id)
+            ->leaderboard(scope: $scope, branchId: $user->branch_id)
+            ->with('student.branch')
+            ->paginate($request->integer('per_page', 20))
+            ->withQueryString();
+
+        $myAttempt = ExamAttempt::query()
+            ->where('exam_session_id', $examSession->id)
+            ->where('student_id', $user->id)
+            ->first();
+
+        return Inertia::render('Assessment/Cbt/Leaderboard', [
+            'session' => $examSession->loadMissing('template'),
+            'attempts' => $attempts,
+            'myAttempt' => $myAttempt,
+            'currentScope' => $scope,
+        ]);
     }
 }

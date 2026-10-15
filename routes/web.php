@@ -70,6 +70,9 @@ Route::middleware(['auth', 'verified', 'role:student|super-admin'])->prefix('cbt
     Route::match(['get', 'post'], 'sessions/{exam_session}/start', [CbtController::class, 'start'])->name('sessions.start');
     Route::put('attempts/{attempt}/answers', [CbtController::class, 'saveAnswer'])->name('attempts.answers.save');
     Route::post('attempts/{attempt}/submit', [CbtController::class, 'submit'])->name('attempts.submit');
+
+    Route::get('attempts/{attempt}/result', [CbtController::class, 'result'])->name('attempts.result');
+    Route::get('sessions/{exam_session}/leaderboard', [CbtController::class, 'leaderboard'])->name('sessions.leaderboard');
 });
 
 Route::middleware(['auth', 'verified', 'permission:'.UserPermissionEnum::VIEW->value, 'branch.context'])->group(function () {
