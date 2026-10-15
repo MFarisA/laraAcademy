@@ -62,7 +62,7 @@ class ExamAttempt extends Model
                     return null;
                 }
 
-                return (int) Carbon::parse($this->submitted_at)->diffInSeconds(Carbon::parse($this->started_at));
+                return (int) abs(Carbon::parse($this->submitted_at)->diffInSeconds(Carbon::parse($this->started_at)));
             }
         );
     }

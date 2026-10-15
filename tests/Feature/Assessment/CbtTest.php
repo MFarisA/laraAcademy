@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Assessment\Cbt\CalculateSessionRanksAction;
 use App\Enum\Access\RoleRegistryEnum;
 use App\Enum\Assessment\DifficultyLevelEnum;
 use App\Enum\Assessment\ExamAttemptStatusEnum;
@@ -13,7 +14,9 @@ use App\Models\Assessment\Exam\ExamSession;
 use App\Models\Assessment\Exam\ExamTemplate;
 use App\Models\Assessment\Question\Question;
 use App\Models\Assessment\Question\QuestionOption;
+use App\Models\Organization\Branch;
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -279,4 +282,165 @@ test('student can submit attempt and scoring engine calculates section results c
         'exam_section_id' => $this->sectionTkp->id,
         'score' => 5.0,
     ]);
+});
+
+test('ranking engine calculates national and branch rank with deterministic tie-breaking', function () {
+    $branchA = Branch::factory()->create(['name' => 'Cabang Jakarta']);
+    $branchB = Branch::factory()->create(['name' => 'Cabang Surabaya']);
+
+    $student1 = User::factory()->create(['branch_id' => $branchA->id]);
+    $student2 = User::factory()->create(['branch_id' => $branchA->id]);
+    $student3 = User::factory()->create(['branch_id' => $branchA->id]);
+    $student4 = User::factory()->create(['branch_id' => $branchB->id]);
+
+    // Student 1: Skor 90, durasi 30 menit (Rank 1 Nasional, Rank 1 Cabang A)
+    $attempt1 = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $student1->id,
+        'status' => ExamAttemptStatusEnum::COMPLETED,
+        'total_score' => 90.00,
+        'started_at' => now()->subMinutes(30),
+        'submitted_at' => now(),
+    ]);
+
+    // Student 4: Skor 85, durasi 20 menit (Rank 2 Nasional, Rank 1 Cabang B)
+    $attempt4 = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $student4->id,
+        'status' => ExamAttemptStatusEnum::COMPLETED,
+        'total_score' => 85.00,
+        'started_at' => now()->subMinutes(20),
+        'submitted_at' => now(),
+    ]);
+
+    // Student 2: Skor 80, durasi 15 menit (lebih cepat dari Student 3 => Rank 3 Nasional, Rank 2 Cabang A)
+    $attempt2 = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $student2->id,
+        'status' => ExamAttemptStatusEnum::COMPLETED,
+        'total_score' => 80.00,
+        'started_at' => now()->subMinutes(15),
+        'submitted_at' => now(),
+    ]);
+
+    // Student 3: Skor 80, durasi 25 menit (lebih lambat dari Student 2 => Rank 4 Nasional, Rank 3 Cabang A)
+    $attempt3 = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $student3->id,
+        'status' => ExamAttemptStatusEnum::COMPLETED,
+        'total_score' => 80.00,
+        'started_at' => now()->subMinutes(25),
+        'submitted_at' => now(),
+    ]);
+
+    // Jalankan kalkulasi ranking
+    CalculateSessionRanksAction::run($this->session->id);
+
+    $attempt1->refresh();
+    $attempt2->refresh();
+    $attempt3->refresh();
+    $attempt4->refresh();
+
+    // Verifikasi Ranking Nasional
+    expect($attempt1->national_rank)->toBe(1);
+    expect($attempt4->national_rank)->toBe(2);
+    expect($attempt2->national_rank)->toBe(3);
+    expect($attempt3->national_rank)->toBe(4);
+
+    // Verifikasi Ranking Cabang
+    expect($attempt1->branch_rank)->toBe(1);
+    expect($attempt2->branch_rank)->toBe(2);
+    expect($attempt3->branch_rank)->toBe(3);
+    expect($attempt4->branch_rank)->toBe(1);
+});
+
+test('student can view own exam result but cannot view others unless super admin', function () {
+    $attempt = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $this->student->id,
+        'status' => ExamAttemptStatusEnum::COMPLETED,
+        'total_score' => 85.00,
+        'is_passed' => true,
+        'started_at' => now()->subMinutes(30),
+        'submitted_at' => now(),
+    ]);
+
+    // Siswa pemilik attempt -> 200 OK
+    $this->actingAs($this->student)
+        ->get(route('cbt.attempts.result', $attempt))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Assessment/Cbt/Result')
+            ->has('attempt')
+            ->has('session')
+        );
+
+    // Siswa lain mencoba melihat -> 403 Forbidden
+    $this->actingAs($this->otherStudent)
+        ->get(route('cbt.attempts.result', $attempt))
+        ->assertForbidden();
+
+    // Super Admin mencoba melihat -> 200 OK
+    $admin = User::factory()->create();
+    $admin->assignRole(RoleRegistryEnum::SUPERADMIN->value);
+
+    $this->actingAs($admin)
+        ->get(route('cbt.attempts.result', $attempt))
+        ->assertOk();
+});
+
+test('student can view session leaderboard with national and branch scope', function () {
+    $branch = Branch::factory()->create();
+    $this->student->update(['branch_id' => $branch->id]);
+
+    ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $this->student->id,
+        'status' => ExamAttemptStatusEnum::COMPLETED,
+        'total_score' => 90.00,
+        'national_rank' => 1,
+        'branch_rank' => 1,
+        'is_passed' => true,
+        'started_at' => now()->subMinutes(20),
+        'submitted_at' => now(),
+    ]);
+
+    // Leaderboard scope nasional
+    $this->actingAs($this->student)
+        ->get(route('cbt.sessions.leaderboard', $this->session))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Assessment/Cbt/Leaderboard')
+            ->has('session')
+            ->has('attempts.data', 1)
+            ->where('currentScope', 'national')
+        );
+
+    // Leaderboard scope cabang
+    $this->actingAs($this->student)
+        ->get(route('cbt.sessions.leaderboard', ['exam_session' => $this->session, 'scope' => 'branch']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Assessment/Cbt/Leaderboard')
+            ->where('currentScope', 'branch')
+        );
+});
+
+test('submitting attempt redirects to exam result page and triggers ranking calculation', function () {
+    $attempt = ExamAttempt::create([
+        'exam_session_id' => $this->session->id,
+        'student_id' => $this->student->id,
+        'status' => ExamAttemptStatusEnum::IN_PROGRESS,
+        'total_score' => 0.00,
+        'started_at' => now()->subMinutes(15),
+    ]);
+
+    $response = $this->actingAs($this->student)
+        ->post(route('cbt.attempts.submit', $attempt));
+
+    $response->assertRedirect(route('cbt.attempts.result', $attempt));
+
+    $attempt->refresh();
+    expect($attempt->status)->toBe(ExamAttemptStatusEnum::COMPLETED);
+    expect($attempt->national_rank)->not->toBeNull();
 });

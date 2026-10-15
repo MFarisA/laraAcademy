@@ -1,5 +1,12 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Calendar, Clock, KeyRound, PlayCircle } from 'lucide-react';
+import {
+    Award,
+    Calendar,
+    Clock,
+    KeyRound,
+    PlayCircle,
+    Trophy,
+} from 'lucide-react';
 import { useState } from 'react';
 
 import Heading from '@/components/heading';
@@ -23,8 +30,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { enter, index, start } from '@/routes/cbt/sessions';
-import type { BreadcrumbItem } from '@/types';
+import { result } from '@/routes/cbt/attempts';
+import { enter, leaderboard, start } from '@/routes/cbt/sessions';
 
 type ExamSessionItem = {
     id: number;
@@ -63,13 +70,6 @@ type PageProps = {
         meta?: PaginationMeta;
     };
 };
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Ujian CBT',
-        href: index.url(),
-    },
-];
 
 export default function Index({ sessions }: PageProps) {
     const { data: sessionList } = sessions;
@@ -243,8 +243,10 @@ export default function Index({ sessions }: PageProps) {
                                                         'in_progress'
                                                             ? 'Sedang Dikerjakan'
                                                             : userAttempt.status ===
-                                                                'submitted'
-                                                              ? 'Sudah Mengumpulkan'
+                                                                    'completed' ||
+                                                                userAttempt.status ===
+                                                                    'submitted'
+                                                              ? 'Sudah Selesai'
                                                               : userAttempt.status}
                                                     </span>
                                                 </div>
@@ -280,14 +282,41 @@ export default function Index({ sessions }: PageProps) {
                                                 </Link>
                                             </Button>
                                         ) : userAttempt?.status ===
-                                          'submitted' ? (
-                                            <Button
-                                                disabled
-                                                variant="secondary"
-                                                className="w-full"
-                                            >
-                                                Sudah Selesai
-                                            </Button>
+                                              'completed' ||
+                                          userAttempt?.status ===
+                                              'submitted' ? (
+                                            <div className="grid w-full grid-cols-2 gap-2">
+                                                <Button
+                                                    asChild
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="w-full gap-1.5"
+                                                >
+                                                    <Link
+                                                        href={result.url(
+                                                            userAttempt.id,
+                                                        )}
+                                                    >
+                                                        <Award className="h-4 w-4 text-primary" />
+                                                        Lihat Hasil
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    asChild
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="w-full gap-1.5"
+                                                >
+                                                    <Link
+                                                        href={leaderboard.url(
+                                                            session.id,
+                                                        )}
+                                                    >
+                                                        <Trophy className="h-4 w-4 text-amber-500" />
+                                                        Leaderboard
+                                                    </Link>
+                                                </Button>
+                                            </div>
                                         ) : timing === 'active' ? (
                                             <Button
                                                 className="w-full gap-2"
@@ -385,7 +414,3 @@ export default function Index({ sessions }: PageProps) {
         </>
     );
 }
-
-Index.layout = {
-    breadcrumbs,
-};

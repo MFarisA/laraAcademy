@@ -128,7 +128,7 @@ class CbtController extends Controller
             'message' => 'Ujian berhasil dikumpulkan.',
         ]);
 
-        return to_route('dashboard');
+        return to_route('cbt.attempts.result', $attempt);
     }
 
     public function result(Request $request, ExamAttempt $attempt): Response
