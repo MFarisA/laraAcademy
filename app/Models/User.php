@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Concerns\BelongsToBranch;
+use App\Enum\Access\RoleRegistryEnum;
 use App\Models\Academic\Enrollment\ClassroomEnrollment;
 use App\Models\Assessment\Exam\ExamAttempt;
 use App\Models\Assessment\Physical\PhysicalAssessment;
@@ -41,6 +42,8 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static> filter(array<string, mixed> $filters)
  * @method static \Illuminate\Database\Eloquent\Builder<static> accessibleBy(?\App\Models\User $user = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static> role(string|array|\BackedEnum $roles, ?string $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static> accessibleStudentsFor(?\App\Models\User $currentUser = null)
  */
 #[Fillable(['name', 'email', 'password', 'is_active', 'branch_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -71,14 +74,25 @@ class User extends Authenticatable implements PasskeyUser
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query
-            ->when($filters['search'] ?? null, fn (Builder $q, string $search) => $q
+            ->when($filters['search'] ?? null, fn ($q, string $search) => $q
                 ->whereAny(['name', 'email'], 'like', "%{$search}%"))
-            ->when(filled($filters['is_active'] ?? null), fn (Builder $q) => $q
+            ->when(filled($filters['is_active'] ?? null), fn ($q) => $q
                 ->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN)))
-            ->when($filters['branch_id'] ?? null, fn (Builder $q, $branchId) => $q
+            ->when($filters['branch_id'] ?? null, fn ($q, $branchId) => $q
                 ->where('branch_id', $branchId))
-            ->when($filters['role'] ?? $filters['roles'] ?? null, fn (Builder $q, $roles) => $q
-                ->whereHas('roles', fn (Builder $rq) => $rq->whereIn('name', (array) $roles)));
+            ->when($filters['role'] ?? $filters['roles'] ?? null, fn ($q, $roles) => $q
+                ->whereHas('roles', fn ($rq) => $rq->whereIn('name', (array) $roles)));
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     */
+    public function scopeAccessibleStudentsFor(Builder $query, ?User $currentUser = null): void
+    {
+        /** @var User $query */
+        $query->role(RoleRegistryEnum::STUDENT->value)
+            ->where('is_active', true)
+            ->accessibleBy($currentUser);
     }
 
     /**
